@@ -159,6 +159,10 @@ endmodule
 # Day 3 - Combinational and Sequential Optimizations
 
 Introduction to Logic optimisations
+The simulator performs many types of optimisations on the combinational and sequential circuits.
+	1.Combinational optimisation methods:
+	2.Sequential optimisation methods:
+
 
 
 
