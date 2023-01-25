@@ -156,7 +156,7 @@ endmodule
 
 ![image](https://user-images.githubusercontent.com/123365830/214507543-c64cf302-cdca-4f8e-b8da-28e2f9e2b3e6.png)
 
-#Day 3 - Combinational and Sequential Optimizations
+# Day 3 - Combinational and Sequential Optimizations
 
 Introduction to Logic optimisations
 
