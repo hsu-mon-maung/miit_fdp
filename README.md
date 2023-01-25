@@ -79,6 +79,49 @@ Switching off the syntax color red
 ![image](https://user-images.githubusercontent.com/123365830/214502458-da91030a-10cb-4e84-9678-d0ba74e0cabf.png)
 
 
+Enabling the line numbers
+  Command used :se nu
+
+![image](https://user-images.githubusercontent.com/123365830/214502577-d3fe858e-b470-4e54-b146-d1280e02f498.png)
+
+
+![image](https://user-images.githubusercontent.com/123365830/214502605-8ecc27df-64ca-412e-8195-8dde77a635e1.png)
+
+![image](https://user-images.githubusercontent.com/123365830/214502638-1b09d5a9-3350-4968-b92d-6ab8ff44ec4e.png)
+
+![image](https://user-images.githubusercontent.com/123365830/214502665-f362755e-b50f-4c8a-84ae-bdb544e2330e.png)
+
+
+Command used - :vsp
+
+![image](https://user-images.githubusercontent.com/123365830/214502706-3d1673de-19a0-4104-9fdc-065dfb555f73.png)
+
+Command used -  🆚
+
+![image](https://user-images.githubusercontent.com/123365830/214502770-1e465fd7-95f5-4e0b-a5a6-6e9a0fa1f584.png)
+
+Command used -    !vim multiple_modules.v
+
+![image](https://user-images.githubusercontent.com/123365830/214502821-8c63f2a8-a8b6-4fb6-9ecf-4d1b44660049.png)
+
+After the command ----  synth –top multiple_modules, the following screenshot will be shown.
+
+![image](https://user-images.githubusercontent.com/123365830/214502868-4003d1bf-21ba-4a84-8068-f3f6c1e3c80a.png)
+
+Command used -- abc  –liberty ../lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+
+![image](https://user-images.githubusercontent.com/123365830/214502916-b8f32520-d081-4bae-bd58-eeb8e9aba340.png)
+
+After the command ------ show multiple_modules, the following result will be shown.
+
+![image](https://user-images.githubusercontent.com/123365830/214502966-df5c856b-66ab-4b1d-8318-b8c02b2f03c4.png)
+
+yosys>write_verilog –noattr  multiple_modules_hier.v
+$!vim multiple_modules_hier.v
+
+![image](https://user-images.githubusercontent.com/123365830/214503042-865e456a-f1e0-4901-b230-834bf444dc64.png)
+
+
 
 
 
