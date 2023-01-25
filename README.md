@@ -66,5 +66,19 @@ Below screenshot is after show command.
 
 ![image](https://user-images.githubusercontent.com/123365830/214257375-66e5085b-a03e-4d56-a04c-fdfeb9aa81c8.png)
 
+Day 2 - Timing libs, hierarchical vs flat synthesis and efficient flop coding styles
+
+The following window appears that shows the library file sky130_fd_sc_hd__tt_025C_1v80.lib
+!vim ../lib/SKY130_fd_sc_hd__tt_025C_1v80.lib
+
+![image](https://user-images.githubusercontent.com/123365830/214502415-d01d4b82-4899-4ff9-a684-29c4e54e1e5f.png)
+
+Switching off the syntax color red
+  Command used : syn off
+
+![image](https://user-images.githubusercontent.com/123365830/214502458-da91030a-10cb-4e84-9678-d0ba74e0cabf.png)
+
+
+
 
 
