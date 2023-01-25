@@ -78,48 +78,94 @@ Switching off the syntax color red
 
 ![image](https://user-images.githubusercontent.com/123365830/214502458-da91030a-10cb-4e84-9678-d0ba74e0cabf.png)
 
+yosys> show
 
-Enabling the line numbers
-  Command used :se nu
+![image](https://user-images.githubusercontent.com/123365830/214506541-ccfad12b-90af-4a56-a77d-59644cdd7a8e.png)
 
-![image](https://user-images.githubusercontent.com/123365830/214502577-d3fe858e-b470-4e54-b146-d1280e02f498.png)
+SUB MODULE LEVEL SYNTHESIS AND ITS NECESSITY
+
+In the following example, I am going to synthesize at sub_module 1 level
+
+yosys>synth –top sub_modules1
+yosys>abc –liberty ../lib/ sky130_fd_sc_hd__tt_025C_1v80.lib
+yosys>show
+
+After above command, the following result will be shown.
+
+![image](https://user-images.githubusercontent.com/123365830/214506705-7845b51d-bcfe-46f1-af00-2deedd42b4ca.png)
+
+Glitches
+Asynchronous and Synchronous Resets
+In yosys terminal, type the command - !vim dff_asyncres.v –o dff_async_set.v
+
+![image](https://user-images.githubusercontent.com/123365830/214506826-5de171b0-841b-40ff-b939-a793512dfacf.png)
+
+$ iverilog dff_asyncres.v tb_dff_asyncres.v
+$./a.out
+$gtkwave tb_dff_asyncres.vcd
+
+![image](https://user-images.githubusercontent.com/123365830/214506936-b7f1ed7e-d1e9-4a95-920b-0ff93b41422f.png)
+
+•	Q follows d only at the posedge of the clock.
+•	But as and when async_rest=1,Q becomes 0 without waiting for the next edge of the clock.
+
+![image](https://user-images.githubusercontent.com/123365830/214506994-ad1a6c72-0a81-46f4-9aa0-7cda2d2c5585.png)
+
+•	In the result,  when async_reset goes low(1 to 0),Q doesn't become 1 immediately ,it waits for the next clock edge to follow D.
+•	Even if asunc_reset=1 and D=1, Q=0 as reset takes high precedence(that is how the code has been written,if condition of reset is checked first).
+
+Synthesis implementation results : asynchronous set:
+
+![image](https://user-images.githubusercontent.com/123365830/214507131-8c268266-f380-4d8a-bdba-534bea1efb26.png)
+
+Synthesis implementation results : asynchronous reset
+
+![image](https://user-images.githubusercontent.com/123365830/214507145-6d158823-3570-46e4-8c6a-f7310f7e24e0.png)
+
+For Synchronous, Synchronous Reset and set :
+
+![image](https://user-images.githubusercontent.com/123365830/214507203-6c09f864-c9a6-445d-a7f5-b33dfde424c1.png)
+
+Synthesis Results:
+
+![image](https://user-images.githubusercontent.com/123365830/214507246-8a6b5c12-4990-49ff-8404-34fc7f860ec5.png)
+
+Case where in both both asynchronous and synchronous resets are applied together :
+RTL Code:
+
+![image](https://user-images.githubusercontent.com/123365830/214507286-20b00509-ad70-4cc3-9dfa-65de8d2111f9.png)
+
+Synthesis results:
+
+![image](https://user-images.githubusercontent.com/123365830/214507342-e9048eea-c4af-421d-87fb-6a99e8e1efb5.png)
 
 
-![image](https://user-images.githubusercontent.com/123365830/214502605-8ecc27df-64ca-412e-8195-8dde77a635e1.png)
+Optimization
+Let's Consider the following design where the 3 bit input is multiplied by 2 and the output is a 4 bit value.
+RTL Code:
 
-![image](https://user-images.githubusercontent.com/123365830/214502638-1b09d5a9-3350-4968-b92d-6ab8ff44ec4e.png)
+![image](https://user-images.githubusercontent.com/123365830/214507409-b55b4e7a-4e1e-47d6-9113-07c0cff9c611.png)
 
-![image](https://user-images.githubusercontent.com/123365830/214502665-f362755e-b50f-4c8a-84ae-bdb544e2330e.png)
+Synthesis Result:
+
+![image](https://user-images.githubusercontent.com/123365830/214507477-f94f142d-d896-4258-9932-929dde86152a.png)
+
+Let's consider the following design where the 3 bit input is multiplied by 9 and the output is a 6 bit value.
+module mult8 (input [2:0] a , output [5:0] y);
+	assign y = a* 9;
+endmodule
+
+![image](https://user-images.githubusercontent.com/123365830/214507543-c64cf302-cdca-4f8e-b8da-28e2f9e2b3e6.png)
 
 
-Command used - :vsp
 
-![image](https://user-images.githubusercontent.com/123365830/214502706-3d1673de-19a0-4104-9fdc-065dfb555f73.png)
 
-Command used -  🆚
 
-![image](https://user-images.githubusercontent.com/123365830/214502770-1e465fd7-95f5-4e0b-a5a6-6e9a0fa1f584.png)
 
-Command used -    !vim multiple_modules.v
 
-![image](https://user-images.githubusercontent.com/123365830/214502821-8c63f2a8-a8b6-4fb6-9ecf-4d1b44660049.png)
 
-After the command ----  synth –top multiple_modules, the following screenshot will be shown.
 
-![image](https://user-images.githubusercontent.com/123365830/214502868-4003d1bf-21ba-4a84-8068-f3f6c1e3c80a.png)
 
-Command used -- abc  –liberty ../lib/sky130_fd_sc_hd__tt_025C_1v80.lib
-
-![image](https://user-images.githubusercontent.com/123365830/214502916-b8f32520-d081-4bae-bd58-eeb8e9aba340.png)
-
-After the command ------ show multiple_modules, the following result will be shown.
-
-![image](https://user-images.githubusercontent.com/123365830/214502966-df5c856b-66ab-4b1d-8318-b8c02b2f03c4.png)
-
-yosys>write_verilog –noattr  multiple_modules_hier.v
-$!vim multiple_modules_hier.v
-
-![image](https://user-images.githubusercontent.com/123365830/214503042-865e456a-f1e0-4901-b230-834bf444dc64.png)
 
 
 
