@@ -98,7 +98,7 @@ After above command, the following result will be shown.
 
 Asynchronous and Synchronous Resets
 
-In yosys terminal, type the command - !vim dff_asyncres.v –o dff_async_set.v
+In terminal, type the command - !vim dff_asyncres.v –o dff_async_set.v
 
 ![image](https://user-images.githubusercontent.com/123365830/214506826-5de171b0-841b-40ff-b939-a793512dfacf.png)
 
@@ -147,6 +147,7 @@ Synthesis results:
 
 
 Optimization
+
 Let's Consider the following design where the 3 bit input is multiplied by 2 and the output is a 4 bit value.
 RTL Code:
 
