@@ -307,6 +307,23 @@ Yosys synthesis result is shown in below:
 
 ![image](https://user-images.githubusercontent.com/123365830/214768790-053164e2-2ffd-4091-94db-b35a29cb62ea.png)
 
+Example 4: dff_const4.v
+
+RTL Code is : 
+
+![image](https://user-images.githubusercontent.com/123365830/214769112-9270738f-3b71-4312-8925-dca6c1025a16.png)
+
+In this example, regardless of the input whether reset or not , Q1 is always going to be constant i.e. Q1=1 . As q can only be 1 or q1 depending on the reset input , but q1 = 1 . Therefore,  q is also constant at the value 1. 
+
+The simulated waveform is shown in below:
+
+![image](https://user-images.githubusercontent.com/123365830/214769499-bbc85ae3-8c9b-472d-bc2a-4fed5a095bfa.png)
+
+As the output is always constant, it can easily be optimized. The yosys synthesis is shown in the following.
+
+![image](https://user-images.githubusercontent.com/123365830/214769545-06ee7f3e-8e02-4af8-b4b8-c193e1046a00.png)
+
+
 
 
 
