@@ -186,6 +186,7 @@ To remove all unused cells and wires to prduce optimised digital circuit using t
 ![image](https://user-images.githubusercontent.com/123365830/214760572-6eb57b66-2a56-4488-878b-a6cda287255a.png)
 
 Next, we use the following commands.
+
 	abc -liberty ../my_lib/lib/sky130_fd_sc_hd_tt_025C_1v80.lib  
  	write_verilog -noattr opt_check_netlist.v 
  	show
@@ -215,6 +216,18 @@ The output is to be a 3 input AND gate based on constant propagation and boolean
 After synthesis, graphical representation of its is shown in below. Yosys synthesizes a 3 input AND gate as expected because of optimisations.
 
 ![image](https://user-images.githubusercontent.com/123365830/214764271-7ab5f054-8919-43ef-825f-a4ab55f0cc78.png)
+
+Example 4: opt_check4.v
+
+In this example, the boolean logic optimisation simplifies the output y = a xnor c (single xnor gate). The RTL code is:
+
+![image](https://user-images.githubusercontent.com/123365830/214764987-0c0b5bc3-90b4-4de9-98dd-b5c719ecb0fa.png)
+
+After the synthesis, generate the netlist and observe its graphical representation is like below:
+
+![image](https://user-images.githubusercontent.com/123365830/214765053-a793ba58-a9eb-4b03-8b52-d8dc46207824.png)
+
+
 
 
 
