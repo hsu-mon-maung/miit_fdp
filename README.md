@@ -47,7 +47,7 @@ Below screenshot is gtkwave window.
 
 ![image](https://user-images.githubusercontent.com/123365830/214256431-11dd6fbb-e0aa-4d3a-9ac0-442cf04d689a.png)
 
-after that Error can be occured : gvim tb_good_mux.v -o good_mux.v
+After that Error can be occured : gvim tb_good_mux.v -o good_mux.v
 
 ![image](https://user-images.githubusercontent.com/123365830/214256856-f633342f-a9ce-49d9-a4d3-3cc62adee5ed.png)
 
@@ -82,7 +82,7 @@ yosys> show
 
 ![image](https://user-images.githubusercontent.com/123365830/214506541-ccfad12b-90af-4a56-a77d-59644cdd7a8e.png)
 
-SUB MODULE LEVEL SYNTHESIS AND ITS NECESSITY
+# SUB MODULE LEVEL SYNTHESIS AND ITS NECESSITY
 
 In the following example, I am going to synthesize at sub_module 1 level
 
