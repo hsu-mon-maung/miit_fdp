@@ -242,6 +242,7 @@ We must use Flat Synthesis here otherwise the optimisations will not be performe
 
 Example 6: multiple_module_opt2.v
 
+
 ![image](https://user-images.githubusercontent.com/123365830/214765887-a50c5ce5-db03-44bf-a0a5-06e8b5a5cc28.png)
 
 In this boolean optimisation, obtain the output y=1 simply. It's synthesis yields:
