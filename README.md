@@ -94,24 +94,30 @@ After above command, the following result will be shown.
 
 ![image](https://user-images.githubusercontent.com/123365830/214506705-7845b51d-bcfe-46f1-af00-2deedd42b4ca.png)
 
-Glitches
+# Glitches
+
 Asynchronous and Synchronous Resets
+
 In yosys terminal, type the command - !vim dff_asyncres.v –o dff_async_set.v
 
 ![image](https://user-images.githubusercontent.com/123365830/214506826-5de171b0-841b-40ff-b939-a793512dfacf.png)
 
 $ iverilog dff_asyncres.v tb_dff_asyncres.v
+
 $./a.out
+
 $gtkwave tb_dff_asyncres.vcd
 
 ![image](https://user-images.githubusercontent.com/123365830/214506936-b7f1ed7e-d1e9-4a95-920b-0ff93b41422f.png)
 
 •	Q follows d only at the posedge of the clock.
+
 •	But as and when async_rest=1,Q becomes 0 without waiting for the next edge of the clock.
 
 ![image](https://user-images.githubusercontent.com/123365830/214506994-ad1a6c72-0a81-46f4-9aa0-7cda2d2c5585.png)
 
 •	In the result,  when async_reset goes low(1 to 0),Q doesn't become 1 immediately ,it waits for the next clock edge to follow D.
+
 •	Even if asunc_reset=1 and D=1, Q=0 as reset takes high precedence(that is how the code has been written,if condition of reset is checked first).
 
 Synthesis implementation results : asynchronous set:
@@ -151,6 +157,7 @@ Synthesis Result:
 ![image](https://user-images.githubusercontent.com/123365830/214507477-f94f142d-d896-4258-9932-929dde86152a.png)
 
 Let's consider the following design where the 3 bit input is multiplied by 9 and the output is a 6 bit value.
+
 module mult8 (input [2:0] a , output [5:0] y);
 	assign y = a* 9;
 endmodule
