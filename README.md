@@ -227,6 +227,20 @@ After the synthesis, generate the netlist and observe its graphical representati
 
 ![image](https://user-images.githubusercontent.com/123365830/214765053-a793ba58-a9eb-4b03-8b52-d8dc46207824.png)
 
+Example 5: multiple_module_opt.v
+
+RTL Code :
+
+![image](https://user-images.githubusercontent.com/123365830/214765567-b57df713-ed39-4ff8-8b37-54fd35384515.png)
+
+In synthesizing process, use flatten before opt_clean -purge. 
+
+Both submodule1 and 2 are instantiated in this multiple_module_opt. 
+We must use Flat Synthesis here otherwise the optimisations will not be performed on the sub module level. The synthesized result is shown below.
+
+![image](https://user-images.githubusercontent.com/123365830/214765615-f5024c1b-db4b-493c-b47c-d06d18540507.png)
+
+
 
 
 
