@@ -161,8 +161,27 @@ endmodule
 Introduction to Logic optimisations
 
 The simulator performs many types of optimisations on the combinational and sequential circuits.
+
 	1.Combinational optimisation methods:
 	2.Sequential optimisation methods:
+	
+# Combinational Logic Optimisations
+
+To understand each of the combinational optimisations, we can try through different RTL code examples. 
+To understand how the optimisations take place, we check the synthesis implementation through yosys All the optimisation examples are in files opt_check.v, opt_check4.v, and multiple_modules_opt.v and these files are present under the verilog_files directory.
+
+Example 1: opt_check.v
+
+module opt_check (input a, input b , output y);
+	assign y = a?b:0;
+endmodule
+
+In this example, the constant 0 propagates further in the logic. we obtain y = ab by using boolean simplification.
+Synthesizing this in yosys : After the command : synth –top opt_check, the following result will be shown.
+
+
+
+
 
 
 
