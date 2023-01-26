@@ -192,7 +192,16 @@ Next, we use the following commands.
 
 The graphical synthesis realisation is shown in the following figure and the Yosys has synthesized an AND gate.
 
-![image](https://user-images.githubusercontent.com/123365830/214760741-af8909fc-0a7b-4b38-b550-ce1f8cba0722.png)
+![image](https://user-images.githubusercontent.com/123365830/214760912-a5c907ec-f304-42d0-a4d5-da552b2d1545.png)
+
+Example 2 : opt_check2.v
+
+![image](https://user-images.githubusercontent.com/123365830/214761104-3d791d13-3277-47a4-bd66-100f823ec1fd.png)
+
+In this example, the expected output y to be an OR gate, because the output of the mux can be simplified to y = a + b. If we generate the netlist and its graphical representation is like the  following result.
+
+
+
 
 
 
