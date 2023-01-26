@@ -240,6 +240,16 @@ We must use Flat Synthesis here otherwise the optimisations will not be performe
 
 ![image](https://user-images.githubusercontent.com/123365830/214765615-f5024c1b-db4b-493c-b47c-d06d18540507.png)
 
+Example 6: multiple_module_opt2.v
+
+![image](https://user-images.githubusercontent.com/123365830/214765887-a50c5ce5-db03-44bf-a0a5-06e8b5a5cc28.png)
+
+In this boolean optimisation, obtain the output y=1 simply. It's synthesis yields:
+
+![image](https://user-images.githubusercontent.com/123365830/214765946-fb136644-2f0c-43cf-a744-cc0a99a44b0e.png)
+
+
+
 
 
 
