@@ -179,6 +179,24 @@ endmodule
 In this example, the constant 0 propagates further in the logic. we obtain y = ab by using boolean simplification.
 Synthesizing this in yosys : After the command : synth –top opt_check, the following result will be shown.
 
+![image](https://user-images.githubusercontent.com/123365830/214760492-240f8950-508b-4d2c-887a-4b585f5e478c.png)
+
+To remove all unused cells and wires to prduce optimised digital circuit using the opt_clean -purge command as shown below:
+
+![image](https://user-images.githubusercontent.com/123365830/214760572-6eb57b66-2a56-4488-878b-a6cda287255a.png)
+
+Next, we use the following commands.
+	abc -liberty ../my_lib/lib/sky130_fd_sc_hd_tt_025C_1v80.lib  
+ 	write_verilog -noattr opt_check_netlist.v 
+ 	show
+
+The graphical synthesis realisation is shown in the following figure and the Yosys has synthesized an AND gate.
+
+![image](https://user-images.githubusercontent.com/123365830/214760741-af8909fc-0a7b-4b38-b550-ce1f8cba0722.png)
+
+
+
+
 
 
 
