@@ -1,5 +1,5 @@
 # miit_fdp
-Day 1 Introduction to Verilog RTL Design and Synthesis
+# Day 1 Introduction to Verilog RTL Design and Synthesis
 
 Labs using iverilog and gtkwave
 mkdir vsd  
@@ -65,7 +65,7 @@ Below screenshot is after show command.
 
 ![image](https://user-images.githubusercontent.com/123365830/214257375-66e5085b-a03e-4d56-a04c-fdfeb9aa81c8.png)
 
-Day 2 - Timing libs, hierarchical vs flat synthesis and efficient flop coding styles
+# Day 2 - Timing libs, hierarchical vs flat synthesis and efficient flop coding styles
 
 The following window appears that shows the library file sky130_fd_sc_hd__tt_025C_1v80.lib
 !vim ../lib/SKY130_fd_sc_hd__tt_025C_1v80.lib
