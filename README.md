@@ -200,6 +200,25 @@ Example 2 : opt_check2.v
 
 In this example, the expected output y to be an OR gate, because the output of the mux can be simplified to y = a + b. If we generate the netlist and its graphical representation is like the  following result.
 
+![image](https://user-images.githubusercontent.com/123365830/214763724-fb88d9b9-9823-451a-b6f9-9b18a71a4ab5.png)
+
+The synthesis tool instead of OR gates infers a nand gate with inverted inputs based on Demorgan's Law.
+
+Example 3: opt_check3.v
+
+The RTL verilog code of opt_check3.v is:
+
+![image](https://user-images.githubusercontent.com/123365830/214763939-cbac5c38-266d-4d00-955a-dd30a583fc47.png)
+
+The output is to be a 3 input AND gate based on constant propagation and boolean logic optimisation.The output y can be simplified to y = abc.
+
+After synthesis, graphical representation of its is shown in below. Yosys synthesizes a 3 input AND gate as expected because of optimisations.
+
+![image](https://user-images.githubusercontent.com/123365830/214764271-7ab5f054-8919-43ef-825f-a4ab55f0cc78.png)
+
+
+
+
 
 
 
