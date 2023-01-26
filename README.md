@@ -275,6 +275,41 @@ dfflibmap is a switch that tells the synthesizer about the library to pick seque
 
 In this output : No optimisation is performed in th yosys implementation during synthesis.
 
+Example 2 : dff_const2.v
+
+![image](https://user-images.githubusercontent.com/123365830/214767647-8eefa01c-10f0-4e0a-8071-9877c142ff0c.png)
+
+In this example, regardless of the inputs, the output q always remains constant at 1 and viewing the VCD with GTKWave as follows:
+
+![image](https://user-images.githubusercontent.com/123365830/214767688-ec872701-94cf-4637-9717-53bf5cc32aba.png)
+
+It can easily be optimised during synthesis because the output q is always constant.
+
+![image](https://user-images.githubusercontent.com/123365830/214767737-2a59d7e2-d2a8-4dbe-bab1-2c4b4d6e6d7f.png)
+
+Example 3 : dff_const3.v
+
+![image](https://user-images.githubusercontent.com/123365830/214768233-6715960e-a8da-4be1-ab63-599c8d8ed502.png)
+
+When reset goes from 1 to 0, Q1 follows D at the next positive clock edge in an ideal ckt. 
+
+But in reality, Q1 becomes 1 a little after the next positive clk edge(once reset has been made 0)due to Clock-to-Q delay.
+
+So, q takes the value 0 until the next clock edge when it read an input of 1 from q1. The simulated result is shown in below.
+
+![image](https://user-images.githubusercontent.com/123365830/214768386-03fe3b22-a620-4914-a7e4-3af1042d6d24.png)
+
+It is wrong to say that Q=!(reset) or Q=Q1 because Q takes both logic 0 and 1 values in different clock cycles.
+
+Hence, both the flip-flops are retained and no optimisations are performed on this design. Both the D flip-flops are present in the synthesized netlist.
+
+Yosys synthesis result is shown in below:
+
+![image](https://user-images.githubusercontent.com/123365830/214768790-053164e2-2ffd-4091-94db-b35a29cb62ea.png)
+
+
+
+
 
 
 
