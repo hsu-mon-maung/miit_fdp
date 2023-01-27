@@ -357,10 +357,9 @@ In GLS using iverilog flow, the design is a netlist which is given to Iverilog s
 
 ## Labs on GLS and Synthesis-Simulation Mismatch
 
-### Example 1: 
-A mux designed with the help of ternary operator. The RTL code is shown below.
+### Example 1: ### A mux designed with the help of ternary operator. The RTL code is shown below.
 
-use the command : vim ternary_operator_mux 
+Use the command : vim ternary_operator_mux 
 
 	module ternary_operator_mux (input i0 , input i1 , input sel , output y);
 		assign y = sel?i1:i0;
