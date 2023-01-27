@@ -361,7 +361,7 @@ Example 1: A mux designed with the help of ternary operator. The RTL code is sho
 
 use the command : vim ternary_operator_mux 
 
-	module ![#1589F0](ternary_operator_mux) '#1589F0' (input i0 , input i1 , input sel , output y);
+	module ternary_operator_mux (input i0 , input i1 , input sel , output y);
 		assign y = sel?i1:i0;
 	endmodule
 
