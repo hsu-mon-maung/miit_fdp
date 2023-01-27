@@ -368,16 +368,34 @@ use the command : vim ternary_operator_mux
 The synthesized result of the above example is shown below. To get this result, in the yosys terminal, use the following commands:
 
 	read_liberty -lib ../lib/sky130RTLDesignAndSynthesisWorkshop
+	
 	read_verilog ternary_operator_mux.v
+	
 	synth -top ternary_operator_mux
+	
 	abc -liberty ../lib/sky130RTLDesignAndSynthesisWorkshop
+	
 	write_verilog -noattr ternary_operator_net.v
+	
 	show
 
 Note : Make sure the directory is your directory.
 
 ![image](https://user-images.githubusercontent.com/123365830/215016542-a72ce11c-c3ce-4625-b904-40adf8e4ef13.png)
 
+To invoke GLS,
+
+* We need to read our netlist file and the test bench file assosciated with it.
+
+* We need to read 2 extra files that contain the description of verilog models in the netlist.
+
+To see the waveform of RTL simulation,we execute the following commands further
+
+	iverilog ../my_lib/verilog_model/primitives.v ../my_lib/verilog_model/sky130_fd_sc_hd.v ternary_operator_mux_net.v tb_ternary_operator_mux.v
+	
+	./a.out
+	
+	gtkwave tb_ternary_operator_mux.vcd
 
 
 
