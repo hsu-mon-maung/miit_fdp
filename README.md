@@ -397,6 +397,89 @@ To see the waveform of RTL simulation,we execute the following commands further
 	
 	gtkwave tb_ternary_operator_mux.vcd
 
+The generated netlist does behave like a 2X1 multiplexer.
+
+![image](https://user-images.githubusercontent.com/123365830/215020191-2d0d9d20-17cb-45fe-9278-b7242203193d.png)
+
+Example 2: In this example,javascriptalways is evaluated only if javascriptselect is high.It is insensitive to javascriptio or i1 because javascriptselect is low.
+
+	module bad_mux (input i0 , input i1 , input sel , output reg y);
+	always @(sel)
+	begin
+		if(sel)
+			y <= i1;
+		else
+			y <= i0;
+	end 
+	endmodule
+	
+The GTKwave simulation result is shown in following figure.
+
+The design simulates a latch rather than a 2x1 mux. 
+
+![image](https://user-images.githubusercontent.com/123365830/215020481-6f92cf23-567f-41ec-81ce-7b4a401dd729.png)
+
+But the Yosys implementation shows a 2X1 mux .
+
+![image](https://user-images.githubusercontent.com/123365830/215020548-9752a637-1c1d-4d44-a4f2-b20244f52ece.png)
+
+Implement it's GATE level netlist through GLS and observe the waveform,it shows the behaviour of a 2X1 mux as shown below:
+
+![image](https://user-images.githubusercontent.com/123365830/215020702-47b0970a-25fc-4712-9e98-700774a4f98a.png)
+
+Since,the waveforms of stimulated RTL Code : Is of a LATCH the waveforms of gate level netlist thruogh GLS after synthesis: Is of 2X1 MUX We see a Synthesis-Simulation Mismatch.
+
+Example 3: synthesis-simulation mismatch due to wrong order of assignment in blocking assignments
+
+	module blocking_caveat (input a , input b , input c , output reg d);
+	reg x;
+
+	always @(*)
+	begin
+		d = x & c;
+		x = a | b;
+	end 
+	endmodule
+	
+In this example, enter into the loop whenever any of the inputs a b or C changes but D is assigned with old X value since it is using the value of the previous Tclk ,the simulator mimics a delay or a flop. Whereas, during synthesis we see the the OR and AND gates as expected.
+
+The GTKwave simulation result is shown in following figure.
+
+![image](https://user-images.githubusercontent.com/123365830/215021520-91f1a5a8-3af5-40ad-aa39-bc8577f656b1.png)
+
+At the instance where both the inputs a and b are 0. a | b should output 0, which when ANDed with c, should give an output y of 0. The output y thus should hold the value 0.Instead,it holds the value 1. 
+
+But due to the blocking statements in the rtl code, x actually holds a the value of a OR b from the previous clock, hence giving us an incorrect output.
+
+The netlist representation on synthesis is shown as below:
+
+![image](https://user-images.githubusercontent.com/123365830/215021772-101b6cdb-2b7c-4930-8322-4f54f352dc42.png)
+
+The synthesizer does not see the sensitivity list rather the functionality of the RTL design. The netlist representation does not include any latches to hold delayed values pertaining to the previous cycle. It only includes an OR 2 AND gate.
+
+We observe the following waveform when we run gate level simulations on this netlist in verilog using the following command and do the same process that described above.
+
+	iverilog ../my_lib/verilog_model/primitives.v ../my_lib/verilog_model/sky130_fd_sc_hd.v blocking_caveat_net.v tb_blocking_caveat.v
+	
+![image](https://user-images.githubusercontent.com/123365830/215022317-53b838f3-08e1-4403-923d-f6da6321e63b.png)
+
+	
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
 
 
 
