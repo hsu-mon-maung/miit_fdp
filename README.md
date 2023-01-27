@@ -94,7 +94,7 @@ After above command, the following result will be shown.
 
 ![image](https://user-images.githubusercontent.com/123365830/214506705-7845b51d-bcfe-46f1-af00-2deedd42b4ca.png)
 
-# Glitches
+## Glitches
 
 Asynchronous and Synchronous Resets
 
@@ -174,7 +174,7 @@ The simulator performs many types of optimisations on the combinational and sequ
 	1.Combinational optimisation methods:
 	2.Sequential optimisation methods:
 	
-# Combinational Logic Optimisations
+## Combinational Logic Optimisations
 
 To understand each of the combinational optimisations, we can try through different RTL code examples. 
 To understand how the optimisations take place, we check the synthesis implementation through yosys All the optimisation examples are in files opt_check.v, opt_check4.v, and multiple_modules_opt.v and these files are present under the verilog_files directory.
@@ -345,9 +345,9 @@ In GLS using iverilog flow, the design is a netlist which is given to Iverilog s
 
 ## Synthesis Simulation Mismatches
 
-	Missing sensitivity list
+* Missing sensitivity list
 	
-	Blocking and non blocking statements
+* Blocking and non blocking statements
 	
 ## Blocking and non blocking statements Inside always block
 
@@ -357,7 +357,8 @@ In GLS using iverilog flow, the design is a netlist which is given to Iverilog s
 
 ## Labs on GLS and Synthesis-Simulation Mismatch
 
-Example 1: A mux designed with the help of ternary operator. The RTL code is shown below.
+### Example 1: 
+A mux designed with the help of ternary operator. The RTL code is shown below.
 
 use the command : vim ternary_operator_mux 
 
