@@ -337,7 +337,22 @@ As the output is always constant, it can easily be optimized. The yosys synthesi
 
 ## Introduction to Gate Level Simulations
 
-GLS is running the test bench with the Netlist as Design under test.
+GLS is running the test bench with the Netlist as Design under test.The RTL design is valided by providing stimulus to the testbench and it is checked whether it meets our specifications earlier that is running the test bench with the RTL code as our design under test.
+
+Under GLS ,the netlist is applied to the testbench as desh under test . The behavioral level in the RTL code got transformed to the net list in terms of the standard cells present in the library. Therefore,net list is logically same as the RTL code. They both have the same inputs and outputs so the netlist should seamlessly fit in the place of the RTL code. The netlist is put in place of the RTL file and run the simulation with the test bench.
+
+In GLS using iverilog flow, the design is a netlist which is given to Iverilog simulator in terms of standard cells present in the library. The library has different flavours of the same type of cell available. The GATE level verilog models is also given as an input to make the simulator to understand the specification of the different annotations of the cell . If the GATE level models are timing aware (delay annotated ),then we can use the GLS for timing validation as well.
+
+## Synthesis Simulation Mismatches
+
+	Missing sensitivity list
+	
+	Blocking and non blocking statements
+	
+## Blocking and non blocking statements Inside always block
+
+*Blocking Executes the statements in the order it is written So the first statement is evaluated before the second statement
+Non Blocking Executes all the RHS when always block is entered and assigns to LHS. Parallel evaluation
 
 
 
