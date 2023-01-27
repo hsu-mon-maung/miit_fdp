@@ -333,19 +333,6 @@ As the output is always constant, it can easily be optimized. The yosys synthesi
 
 ![image](https://user-images.githubusercontent.com/123365830/214769545-06ee7f3e-8e02-4af8-b4b8-c193e1046a00.png)
 
-# Day 4: Gate Level Simulations,Blocking vs Non Blocking assignments,Synthesis-Simulation Mismatch
-
-## Introduction to Gate Level Simulations
-
-	GLS is running the test bench with Nestlist as Design under test.
-
-## Synthesis Simulation Mismatches
-
-	-	Missing sensitivity list
-	-	Blocking and non blocking statements
-	
-## Missing sensitivity list
-
 
 
 
