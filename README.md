@@ -351,7 +351,7 @@ In GLS using iverilog flow, the design is a netlist which is given to Iverilog s
 	
 ## Blocking and non blocking statements Inside always block
 
-*Blocking Executes the statements in the order it is written So the first statement is evaluated before the second statement
+"*" Blocking Executes the statements in the order it is written So the first statement is evaluated before the second statement
 Non Blocking Executes all the RHS when always block is entered and assigns to LHS. Parallel evaluation
 
 
