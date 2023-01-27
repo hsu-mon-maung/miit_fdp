@@ -368,15 +368,10 @@ use the command : vim ternary_operator_mux
 The synthesized result of the above example is shown below. To get this result, in the yosys terminal, use the following commands:
 
 	read_liberty -lib ../lib/sky130RTLDesignAndSynthesisWorkshop
-
 	read_verilog ternary_operator_mux.v
-
 	synth -top ternary_operator_mux
-
 	abc -liberty ../lib/sky130RTLDesignAndSynthesisWorkshop
-
 	write_verilog -noattr ternary_operator_net.v
-
 	show
 
 Note : Make sure the directory is your directory.
