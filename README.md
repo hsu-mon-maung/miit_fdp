@@ -401,7 +401,8 @@ The generated netlist does behave like a 2X1 multiplexer.
 
 ![image](https://user-images.githubusercontent.com/123365830/215020191-2d0d9d20-17cb-45fe-9278-b7242203193d.png)
 
-Example 2: In this example,javascriptalways is evaluated only if javascriptselect is high.It is insensitive to javascriptio or i1 because javascriptselect is low.
+#### Example 2: 
+In this example,javascriptalways is evaluated only if javascriptselect is high.It is insensitive to javascriptio or i1 because javascriptselect is low.
 
 	module bad_mux (input i0 , input i1 , input sel , output reg y);
 	always @(sel)
@@ -429,7 +430,7 @@ Implement it's GATE level netlist through GLS and observe the waveform,it shows 
 
 Since,the waveforms of stimulated RTL Code : Is of a LATCH the waveforms of gate level netlist thruogh GLS after synthesis: Is of 2X1 MUX We see a Synthesis-Simulation Mismatch.
 
-Example 3: synthesis-simulation mismatch due to wrong order of assignment in blocking assignments
+#### Example 3: synthesis-simulation mismatch due to wrong order of assignment in blocking assignments
 
 	module blocking_caveat (input a , input b , input c , output reg d);
 	reg x;
