@@ -333,6 +333,24 @@ As the output is always constant, it can easily be optimized. The yosys synthesi
 
 ![image](https://user-images.githubusercontent.com/123365830/214769545-06ee7f3e-8e02-4af8-b4b8-c193e1046a00.png)
 
+# Day 4: Gate Level Simulations,Blocking vs Non Blocking assignments,Synthesis-Simulation Mismatch
+
+## Introduction to Gate Level Simulations
+
+	GLS is running the test bench with Netlist as design under test.
+Under GLS , netlist is applied to the testbench as desh under test . What We did at the behavioral level in the RTL code got transformed to the net list in terms of the standard cells present in the library. So,net list is logically same as the RTL code. They both have the same inputs and outputs so the netlist should seamlessly fit in the place of the RTL code. The netlist is placed in place of the RTL file and run the simulation with the test bench.
+For meeting this setup and hold time criteria there are different flavours of cell in the library.
+
+	In GLS using iverilog flow, the design is a netlist which is given to Iverilog simulator in terms of standard cells present in the library. The library has different flavours of the same type of cell available.To make the simulator understand the specification of the different annotations of the cell the GATE level verilog models is also given as an input. If the GATE level models are timing aware (delay annotated ),then we can use the GLS for timing validation as well.
+
+## Synthesis Simulation Mismatches
+
+	-	Missing sensitivity list
+	-	Blocking and non blocking statements
+	
+## Missing sensitivity list
+
+> a
 
 
 
