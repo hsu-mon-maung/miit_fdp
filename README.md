@@ -544,13 +544,111 @@ Depending on the cases matching the select y is assigned accordingly.Some caveat
 	    end
 	    
 
+Then select is C1 or C3 the conditions are not specified. It causes an incomplete case which results in inferred latches for these two cases that latch on to output y.This occurs when some cases are not specified inside the CASE block .For example, if the 2'b10 and 2'b11 cases were not mentioned , the tool would synthesize inferred latches at the 3rd and 4th inputs of the multiplexer. Solution is code case with default inside the CASE block so that the tool knows what to do when a case that is not specified occurs.
 
+#### Correct code :
 
+	reg [1:0] sel
+	always @(*)
+	begin
+	     case(sel)
+	     2'b00: begin
+			   . condition 1
+			   end
+	     2'b01: begin
+			   . condition 2
+			   end
+	    default :begin
+			   . condition 3
+			   end   
+	    end case
+	    end
+	    
+#### 2.Partial Assignments
 
-
-
+	always @(*)
+	begin
+		case(sel)
+			2'boo: begin
+				x = a;
+				y = b;
+			2'b01: begin
+				x = c;
+			default: begin
+				x = d;
+				y = d;
+				end
+		endcase
+	end
 	
+In the above example,the 2 outputs x and y and this will create two 4X1 multiplexers with the respective outputs. If we look at case 2'b01, we have specified the value of x for this case ,but not the value of y. It appears that it is okay to do so, as a default case is specified for both the outputs, and if we don't directly specify the value of y for any case, the simulator will implement the default case. This, however , is incorrect. In partial assignments such as this, the simulator will infer a latch at the 2nd input for multiplexer y as no value is specified for a particular case.
 
+#### 3.Overlapping cases
+
+	always @(*)
+	begin
+		case(sel)
+			2'b00: begin
+				y = a;
+			2'b01: begin
+				y = b;
+				end
+			2'b10: begin
+				y = c;
+			2'b1?: begin
+				y = d;
+				end
+		endcase
+	end
+
+In the above sample code block ,2'b1? specifies that the corresponding bit can be either be 0 or 1. This means that when the sel input is holding a value 3 i.e 2'b11, cases 3 and 4 both hold true. What is synthesized depends on the mercy of the simulator. It can lead to Synthesis-Simulation mismatches.
+If we used an IF condition here, due to priority logic, condition 4 would be ignored when condition 3 is met. However,in the CASE statement , even if the upper case is matched,all the cases are checked.So,if there is overlapping in cases,it poses a problem as the cases are not mutually exclusive. And we would get an unpredictable output.
+
+## Labs on Incorrect IF and CASE constructs
+
+Example 1: Incomplete If statements
+
+The following file is incomp_if.v, and it can be found in the directory verilog_files. Use the command vim incomp_if.v.
+
+	module incomp_if(input i0 , input i1 , input i2 , output reg y);
+	always @(*)
+	begin
+		if(i0)
+			y <= i1;
+	end
+	endmodule
+	
+In this code, an incomplete IF statement is contained and no else condition corresponding to it is mentioned . After simulating this design, following gtkwave is obtained.
+
+![image](https://user-images.githubusercontent.com/123365830/215254366-327001a3-6317-4709-bba0-30286581f87e.png)
+
+From the above waveform,there is no change in y when i0=0. It's equal to previous value when io=0. This result shows that latching Action, which is verified by looking at the synthesis implementation using Ysosys.
+
+![image](https://user-images.githubusercontent.com/123365830/215254402-9534502c-46f3-410b-bc1f-3ba6d690c5a6.png)
+
+
+Example 2: a similar example of incomp_if2.v
+
+	module incomp_if2(input i0 , input i1 , input i2 , input i3,  output reg y);
+	always @(*)
+	begin
+		if(i0)
+			y <= i1;
+		else if (i2)
+			y <= i3;
+
+	end
+	endmodule
+	
+The above code contains an incomplete IF statement as well. Here, we have 2 inputs i1 and i3, as well as 2 conditional inputs i0 and i2. As we do not specifythe case when both i0 and i2 go low,which results in an issue in the synthesis. The gtkwaveform of the simulated design is below
+
+![image](https://user-images.githubusercontent.com/123365830/215254441-9790de27-96df-4301-b333-0c6e9eefc548.png)
+
+In this waveform result, When io is high,output follows i1. When io is low,it looks for i2.If i2 is high,it follows i3. But if i2 is low(and io is already low),y attains a constant value=previous output.
+
+This can be verified by checking the graphical realisation of the yosys synthesis as shown in below.
+
+![image](https://user-images.githubusercontent.com/123365830/215254471-4431ffd3-7d5d-47de-800c-48792be275e6.png)
 
 
 
