@@ -464,6 +464,91 @@ We observe the following waveform when we run gate level simulations on this net
 	
 ![image](https://user-images.githubusercontent.com/123365830/215022317-53b838f3-08e1-4403-923d-f6da6321e63b.png)
 
+# Day 5 - If, Case, For Loop and For Generate
+
+Using the If condition is to to write priority logic. The condition one has a priority or if it has more priority than the consecutive else statements. Only when condition 1 is not met, condition 2 is evaluated and so on. y is assigned accordingly depending on the matching conditions.
+
+If-else block implements a Priority logic that is if cond_1 is satisfied, next if statements are not executed. The following if-else code translates to cascaded multiplexer structure in the final design instead of a single multiplexer.
+
+	if (cond_1)
+	begin 	
+		y = statement_1;
+	end
+	else if (cond_2)
+	begin
+		y = statement_2;
+	end
+	else if (cond_3)
+	begin
+		y = statement_3;
+	end
+	else
+	begin
+		y = statement_4;
+	end
+
+#### Dangers of using Incomplete If statements Inferred Logic, which occurs due to bad coding styles that is incomplete if statements as shown in below.
+
+	if (condt1) 
+	    y=a;
+	else if (condt2)
+	    y=b;
+
+In the sample code, if y is equal to a, it matches condt 1 and else if y is equal to b, it matches condt2. In this case, there is no matching condition when y does not match condt2. As a result of which the simulator tries to latch this case to the output y.It wants to retain the value of y.
+
+Enable of this latch is OR of the condition 1 and condition 2. If neither condition 1 or condition 2 is met the OR gate output disables the latch . The latch retains the value of y and stores it. This is a combinational loop to avoid that the simulator infers a latch. 
+
+This is called the inferred latch due to incomplete if statements which is very dangerous for RTL designing. It should be avoided except for some special cases like the counter.
+
+Note:
+If-case statements are used inside always block.
+In verilog whatever variable we use to assign in if or case statements must be a register variable.
+
+### CASE Constructs
+
+Here, the inferred hardware should be a 4:1 multiplexer and Let's look at the following verilog code block. The CASE statements do not have priority logic like IF statements.
+
+	always @(*)
+	begin
+	     case(sel)
+			2'b00: begin
+				y = statement_1;
+				end
+			2'b01: begin
+				y = statement_2;
+				end
+			2'b10: begin
+				y = statement_3;
+				end
+			2'b11: begin
+				y = statement_4;
+				end
+		endcase
+	end
+
+Depending on the cases matching the select y is assigned accordingly.Some caveats with using CASE statements:
+
+### 1.Incomplete CASE
+
+	reg [1:0] sel
+	always @(*)
+	begin
+	     case(sel)
+	     2'b00: begin
+			   . condition 1
+			   end
+	     2'b01: begin
+			   . condition 2
+			   end
+	    end case
+	    end
+	    
+
+
+
+
+
+
 	
 
 
