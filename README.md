@@ -885,6 +885,64 @@ The resulting gtkwaveform is shown below that shows an adder being simulated:
 
 2.Shon Taware
 
+# Day 6 Introduction to FPGA Programming
+
+#### Example : counter_clk_div.v
+
+The simulation result of this is shown as below
+
+![image](https://user-images.githubusercontent.com/123365830/215696423-39693d8e-009f-44a4-8571-7dc5e6107ccd.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215696454-0368e3aa-76b0-4940-8dc0-ffbce646b707.png)
+
+RTL Schematic Design:
+
+![image](https://user-images.githubusercontent.com/123365830/215696821-3586e4ee-51a5-4874-be8c-d3c940c89353.png)
+
+Synthesized Design :
+
+![image](https://user-images.githubusercontent.com/123365830/215697068-ff87b790-69c2-4d86-9026-d91de505bf9c.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215697130-9a860fc9-1556-4e02-b997-a9fe7a533108.png)
+
+#### constraints.xdc
+
+Report Timing Summary : All users specifeid timing constraints are met and the screenshot is shonw in below:
+
+![image](https://user-images.githubusercontent.com/123365830/215697786-3c8c196a-2be7-4bdd-8bd0-98c0e6c43769.png)
+
+Report Utilization:
+
+![image](https://user-images.githubusercontent.com/123365830/215698300-abbc6ecf-0762-4a4d-af11-2cc2920a2bcf.png)
+
+Generate Bitstream and write to target device (bassy3 board)
+
+![image](https://user-images.githubusercontent.com/123365830/215698864-5acefb38-e391-4209-8f17-9eb680999156.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215698898-4adb4f30-ac91-4f68-8243-ce948629cee2.png)
+
+Warning! is occured in this process like that "The debug hub core was not detected at user scan chain 1 or 3."
+
+#### counter_clk_div_vio.v
+
+![image](https://user-images.githubusercontent.com/123365830/215699612-76e10aa9-453e-48cc-ad64-1ff6579dd3ae.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215699821-d840dbfa-03ed-4231-830f-e839eeb4a5fa.png)
+
+After that the following errors has occured.
+
+![image](https://user-images.githubusercontent.com/123365830/215699969-54f36f16-9030-4b4a-ab80-183bea8791d7.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215700027-55a7a2b4-729a-4f6f-b3ab-bafade7f96eb.png)
+
+
+
+
+
+
+
+
+
 
 
 
