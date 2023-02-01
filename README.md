@@ -953,6 +953,45 @@ the command used : cd libs.tech
 
 ![image](https://user-images.githubusercontent.com/123365830/215974550-26ebee48-c62e-464c-a026-8762ad5fb7ec.png)
 
+### Setting up docker bouilt:
+
+	git clone git@github.com:efabless/openlane --branch rc2
+
+	cd openlane/docker_built
+
+	make merge
+
+![image](https://user-images.githubusercontent.com/123365830/215976381-21ce87ff-b715-42a8-a73c-76cbe8d1a732.png)
+
+### Running Openlane
+
+After Successfully built, type the commands:
+
+cd ..
+
+docker
+
+./flow.tcl –interactive
+
+After that, the following result is shown
+
+![image](https://user-images.githubusercontent.com/123365830/215976692-0d699ed9-9814-44f7-8ef5-5dba4b85055f.png)
+
+Adding a design:
+
+cd /Desktop/work/tools/openlane_working_dir/openlane/designs
+
+ls -ltr 
+
+![image](https://user-images.githubusercontent.com/123365830/215976853-a1a07c2b-02b8-4cfb-9a04-acf98c3a9378.png)
+
+![image](https://user-images.githubusercontent.com/123365830/215976898-772bbfe2-b431-4f62-939e-aa776d29a02a.png)
+
+
+
+
+
+
 
 
 
