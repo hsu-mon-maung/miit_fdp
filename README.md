@@ -977,9 +977,13 @@ After that, the following result is shown
 
 ![image](https://user-images.githubusercontent.com/123365830/215976692-0d699ed9-9814-44f7-8ef5-5dba4b85055f.png)
 
-Adding a design:
+### Adding a design:
 
-cd /Desktop/work/tools/openlane_working_dir/openlane/designs
+OpenLANE Architecture
+
+![image](https://user-images.githubusercontent.com/123365830/215985504-8e82b78a-a9ab-4a73-9fea-03d57e7d5b23.png)
+
+the command used : cd /Desktop/work/tools/openlane_working_dir/openlane/designs
 
 ls -ltr 
 
@@ -987,12 +991,63 @@ ls -ltr
 
 ![image](https://user-images.githubusercontent.com/123365830/215976898-772bbfe2-b431-4f62-939e-aa776d29a02a.png)
 
+### OpenLANE Design Stages
 
+OpenLANE flow consists of several stages. By default all flow steps are run in sequence. Each stage may consist of multiple sub-stages. OpenLANE can also be run interactively which will be shown below.
 
+#### 1. Synthesis
 
+yosys - Performs RTL synthesis
 
+abc - Performs technology mapping
 
+OpenSTA - Pefroms static timing analysis on the resulting netlist to generate timing reports
 
+#### Floorplan and PDN
+
+init_fp - Defines the core area for the macro as well as the rows (used for placement) and the tracks (used for routing)
+
+ioplacer - Places the macro input and output ports
+
+pdn - Generates the power distribution network
+
+tapcell - Inserts welltap and decap cells in the floorplan
+
+#### Placement
+
+RePLace - Performs global placement
+
+Resizer - Performs optional optimizations on the design
+
+OpenDP - Perfroms detailed placement to legalize the globally placed components
+
+#### CTS
+
+TritonCTS - Synthesizes the clock distribution network (the clock tree)
+
+#### Routing *
+
+FastRoute - Performs global routing to generate a guide file for the detailed router
+
+TritonRoute - Performs detailed routing
+
+#### GDSII Generation
+
+Magic - Streams out the final GDSII layout file from the routed def
+
+#### Checks
+
+Magic - Performs DRC Checks & Antenna Checks
+
+Netgen - Performs LVS Checks
+
+### OpenLANE Output
+
+All output run data is placed by default under ./designs/design_name/runs.
+
+After adding the design, the following error has occured.
+
+![image](https://user-images.githubusercontent.com/123365830/215987390-a445ef0b-5e4b-4c3e-84eb-cef5c8744e38.png)
 
 
 
