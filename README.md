@@ -937,6 +937,23 @@ After that the following errors has occured.
 
 ![image](https://user-images.githubusercontent.com/123365830/215700027-55a7a2b4-729a-4f6f-b3ab-bafade7f96eb.png)
 
+# Day 7 Openlane
+
+OpenLANE is an automated RTL to GDSII flow based on several components including OpenROAD, Yosys, Magic, Netgen, Fault and custom methodology scripts for design exploration and optimization. The flow performs full ASIC implementation steps from RTL all the way down to GDSII - this capability will be released in the coming weeks with completed SoC design examples that have been sent to SkyWater for fabricaiton.
+
+### Openlane Directory Structure
+
+![image](https://user-images.githubusercontent.com/123365830/215971305-66a0e738-721b-4453-8706-7179534a303f.png)
+
+the command used : cd libs.ref
+
+![image](https://user-images.githubusercontent.com/123365830/215974498-3078122f-0664-4b5a-a0bc-d0695abfd8cf.png)
+
+the command used : cd libs.tech
+
+![image](https://user-images.githubusercontent.com/123365830/215974550-26ebee48-c62e-464c-a026-8762ad5fb7ec.png)
+
+
 
 
 
