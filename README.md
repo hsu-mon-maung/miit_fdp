@@ -937,9 +937,30 @@ After that the following errors has occured.
 
 ![image](https://user-images.githubusercontent.com/123365830/215700027-55a7a2b4-729a-4f6f-b3ab-bafade7f96eb.png)
 
-# Day 7 Openlane
+# Day 7 Introduction to Openlane
 
 OpenLANE is an automated RTL to GDSII flow based on several components including OpenROAD, Yosys, Magic, Netgen, Fault and custom methodology scripts for design exploration and optimization. The flow performs full ASIC implementation steps from RTL all the way down to GDSII - this capability will be released in the coming weeks with completed SoC design examples that have been sent to SkyWater for fabricaiton.
+
+It is started as an Open-source flow for a true Open Source tape-out Experiment. striVe is a family of open everything SoCs:
+
+* Open PDK
+* Open EDA
+* Open RTL
+
+The main goal of OPENLANE is to produce a clean GDSII with no human intervation (no-human-in-the-loop). here the meaning of clean is that:
+* No LVS violations
+
+* No DRC Violations
+
+* No timing Violations
+
+OPENLANE is tuned for skyWter130nm open PDK. it can be used to harden Macros and chips.there is two mode of operation
+
+* Autonomus : it is the push botton flow. with the push botton , it is a some time base design and due to this push botton, we get final GDSII
+
+* interactive : here we can run comamds and steps one by one.
+
+It has large number of design examples(43 designs with their best configurations).
 
 ### Openlane Directory Structure
 
@@ -952,44 +973,6 @@ the command used : cd libs.ref
 the command used : cd libs.tech
 
 ![image](https://user-images.githubusercontent.com/123365830/215974550-26ebee48-c62e-464c-a026-8762ad5fb7ec.png)
-
-### Setting up docker bouilt:
-
-	git clone git@github.com:efabless/openlane --branch rc2
-
-	cd openlane/docker_built
-
-	make merge
-
-![image](https://user-images.githubusercontent.com/123365830/215976381-21ce87ff-b715-42a8-a73c-76cbe8d1a732.png)
-
-### Running Openlane
-
-After Successfully built, type the commands:
-
-cd ..
-
-docker
-
-./flow.tcl –interactive
-
-After that, the following result is shown
-
-![image](https://user-images.githubusercontent.com/123365830/215976692-0d699ed9-9814-44f7-8ef5-5dba4b85055f.png)
-
-### Adding a design:
-
-OpenLANE Architecture
-
-![image](https://user-images.githubusercontent.com/123365830/215985504-8e82b78a-a9ab-4a73-9fea-03d57e7d5b23.png)
-
-the command used : cd /Desktop/work/tools/openlane_working_dir/openlane/designs
-
-ls -ltr 
-
-![image](https://user-images.githubusercontent.com/123365830/215976853-a1a07c2b-02b8-4cfb-9a04-acf98c3a9378.png)
-
-![image](https://user-images.githubusercontent.com/123365830/215976898-772bbfe2-b431-4f62-939e-aa776d29a02a.png)
 
 ### OpenLANE Design Stages
 
@@ -1041,13 +1024,192 @@ Magic - Performs DRC Checks & Antenna Checks
 
 Netgen - Performs LVS Checks
 
-### OpenLANE Output
+### OpenLANE ASIC Flow (Detailed)
 
-All output run data is placed by default under ./designs/design_name/runs.
+![image](https://user-images.githubusercontent.com/123365830/216042455-0611e571-f057-4610-a333-10d3ec218c50.png)
 
-After adding the design, the following error has occured.
+The design exploration utility is also used for regression testing(CI). we run OpenLANE on ~ 70 designs and compare the results to the best known ones.
 
-![image](https://user-images.githubusercontent.com/123365830/215987390-a445ef0b-5e4b-4c3e-84eb-cef5c8744e38.png)
+### DFT(Design for Test)
+
+It perform scan inserption, automatic test pattern generation, Test patterns compaction, Fault coverage, Fault simulation
+
+![image](https://user-images.githubusercontent.com/123365830/216042788-41d82404-a407-4671-95d1-e6e01a57ae2b.png)
+
+After that physical implementation is done by OpenROAD app. physical implementation involves the several steps:
+
+* Floor/Power Planning
+
+* End Decoupling Capacitors and Tap cells insertion
+
+* Placements: Global and Detailed
+
+* Post Placement Optimization
+
+* Clock Tree synthesis (CTS)
+
+* Routing: Global and Detailed
+Every time the netlist is modified.(CTS modifies the netlist and Post Placements optimization also modifies the netlist).so for that verification must be performed. The LCE(yosys) is used to formally confirm that the function did not change after modifying the netlist. ### Dealing with antenna rules Violation: when a metal wire segment is fabricated, it can act as antenna.as an antenna, it collect charges which can demaged the transister gates during the fabrication.
+
+![image](https://user-images.githubusercontent.com/123365830/216043393-2978f405-d20a-40be-b808-8b629eb7eea1.png)
+
+To address this issue, we have to limit the lenght of the wire. usually this is the job of the router. If router fails to do this, then there are two solutions:
+
+* Bridging attaches a higher layer intermediary
+
+![image](https://user-images.githubusercontent.com/123365830/216043502-da9ebae8-1ef5-4577-9e03-eb086145a001.png)
+
+Add antenna diode cell to leak away charges.(Antenna diodes are provided by the SCL)
+
+![image](https://user-images.githubusercontent.com/123365830/216043900-389bf10b-d9bf-4cf3-9ed3-ce2504ff4dfc.png)
+
+With OpenLANE, we took a preventive approach. here we add fake antenna diode next to every cell input after placement. Then run the Antenna checker on the routed layout. If the checker reports a violation on cell input pin, replace the fake diode cell by a real one.
+
+![image](https://user-images.githubusercontent.com/123365830/216043957-b8e12ad9-842f-4b01-95a0-f5f41719c8bf.png)
+
+### Static Timing analysis(STA)
+
+It involves the interconnect RC Extraction(DEF2SPEF) from the routed layout, followed by STA on OpenSTA(OpenROAD) tool. resulting report will shows the timing violations if any violations is there.
+
+### Physical Verification (DRC and LVS)
+
+Magic is used for design Rules checking and SPICE Extraction from Layout. Magic and Netgen are used for LVS.
+
+## OpenLANE Directory Structure in detail
+
+To list the details in cronological order, cd, ls and ls -ltr commands are used.
+
+Here we are working in Sky130_fd_sc_hd PDK variant : 
+
+where, "sky130" is process name or node name.
+
+"fd" is a foundary name (skyWater foundary).
+
+"sc" means standerd cell librery files and the last one "hd" stands for high density(basically one type of varient).
+
+Sky130_fd_sc_hd varient contains many technology files like verilog, spice, techlef, meglef,mag,gds,cdl,lib,lef,etc. (techlef file contains the layer information).
+
+### Design Preparation Step
+
+Open the terminal and go to the path “openlane” like
+
+	cd work/tools/openlane_working_dir/openlane
+
+	dodcker
+
+	./flow.tcl -interactive 
+
+When we enter in the OpenLANE, we have to use flow.tcl because as a name says, it will goes with the flow using the script. And by using interactive switch, we will do step by step process. 
+Without interactive switch, it will run complete flow from RTL to GDSII. Now OpenLANE is open and we can see that prompt will change now as shown in following figure.
+
+![image](https://user-images.githubusercontent.com/123365830/216044599-d826f24d-6267-4a08-8774-afef0df6a704.png)
+
+Now we have to input all the packages which required to run the flow.
+
+Command used :
+
+	% package require openlane 0.9
+
+Now, here we are ready to execute the command. Now, if we are going into the design folder in openlane, there are nearly 30-40 designs are already builted. Out of them we can open any of the design. for example, here we are opening the picorv32a.v design. In this design we can see many files are available. i.e., scr, config.tcl, etc. This config.tlc file contains every details about the design. for example, details about enrollment, clock period, clock period port etc.
+
+In the terminal,
+
+	cd work/tools/openlane_working_dir/openlane/designs/picorv32a
+
+	ls
+
+![image](https://user-images.githubusercontent.com/123365830/216044904-b35a8ddc-463d-4f3d-9cfd-32688a1fa8c2.png)
+
+Command used : less config.tcl and then the following figure will be appeared.
+
+![image](https://user-images.githubusercontent.com/123365830/216045029-b3cfceec-744a-4704-b30a-47d95149d918.png)
+
+Here we can see that the time period is set to the 5.00 nsec. But, we see in the openlane sky130_fd_sc_hd folder, the period is set about 24 nsec. so it is not override to the main file. If it override then give first priority to the main folder.
+
+Command used : 
+
+	less sky130A_sky130_fd_sc_hd_config.tcl 
+	
+![image](https://user-images.githubusercontent.com/123365830/216045200-9cbadee4-9af4-4359-a54b-d6349e105440.png)
+
+In openlane, we are going to run the synthesis, but before synthesis, we have to prepare design setup stage. for that command is " prep -design picorv32a".
+
+Command used : 
+
+%prep –design picorv32a
+
+After preparation is completed, the following figure will be appeared.
+
+![image](https://user-images.githubusercontent.com/123365830/216045409-d134bd1d-15d6-4fc0-bafc-8670cef3cce8.png)
+
+### Review after design preparation and run synthesis
+
+After completing the preparation, in the picorv32a file, the run directory is created.
+
+ Inside the folder, Today's date is created, so in this terictory some folders are available which is required for openlane.
+ 
+ ![image](https://user-images.githubusercontent.com/123365830/216045566-1ac03098-eaa9-4b37-aafd-f65a4cf31d4b.png)
+
+In the temp file, merged.lef file is available which was created in preparation time. If we open this merged.lef file, we get all the wire or layer level and cell level information. To open this file
+
+	cd work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/01-02_09-25/tmp
+	
+	less merged.lef
+	
+![image](https://user-images.githubusercontent.com/123365830/216045729-5dc3a849-7977-45c0-b284-d9d263abad66.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216045783-e7b33e3d-5eaa-4406-bddd-3c2ac2b518a6.png)
+
+While, in the result folder is empty because till we have not run anything and in the report folder all the folders are there about synthesis, placement, floorplanning,cts,routing,magic,lvs.
+
+![image](https://user-images.githubusercontent.com/123365830/216045908-622163af-e985-4a2f-b111-6240aede0c06.png)
+
+Now here also one config.tcl file is available similar like design folder. But this config.tcl file contains all default parameter taken by the run.
+
+![image](https://user-images.githubusercontent.com/123365830/216046002-e813eefb-08d8-40e9-be88-8b83727bc9b9.png)
+
+When we make some changes in the origional configuration and then we run.
+
+For example if we make a change in core utilization in the floorplanning and then we run the floorplanning, at this time in the congig.tcl file, the core utility will change and by cross checking it we can check that the modification is reflected in the exicution or not.
+
+Now, cmds.log file takes all the record of the commands, what we have fab.
+
+![image](https://user-images.githubusercontent.com/123365830/216046223-36d2482d-312e-4060-8232-7eb16113cc0f.png)
+
+Now in the openlane, run the synthesis by using command : run_synthesis
+
+It will take some 3-4 minutes to run the synthesis and finally synthesis will complied and the result will be shown in below.
+
+![image](https://user-images.githubusercontent.com/123365830/216046663-3bd5b972-c7df-495d-acec-0d25fbce344f.png)
+
+From the data of synthesis, total number of counter D_flip-flops is 1613 and the number of cells is 14876.
+
+In the following figure, the number of D_flip-flops is shown.
+
+![image](https://user-images.githubusercontent.com/123365830/216046793-ae1e0b78-bd25-4e06-8c57-90478a49fef2.png)
+
+In the following figure, the number of cells is shown.
+
+![image](https://user-images.githubusercontent.com/123365830/216046883-71c8dfe6-d684-4d48-a4a9-4d3f7f37c951.png)
+
+So, the flop ratio = (number of flip flops)/(number of total cell).And therefore, the flop ratio is 10.84%.
+
+Before run, we saw that the result folder is empty. but now, after running the synthesis, we can see that all the mapping have been done by ABC.
+
+![image](https://user-images.githubusercontent.com/123365830/216047061-3c72400f-fbfa-4df5-9946-81047d4a72f7.png)
+
+And in the report, we can see when the actual synthesis has done. and the actual statistics synthesis report is showing below, which is same as what we have seen before.
+
+![image](https://user-images.githubusercontent.com/123365830/216047111-e00f1b61-e7ce-407e-9841-2c7f0f04052e.png)
+
+
+
+
+
+
+
+
+
 
 
 
