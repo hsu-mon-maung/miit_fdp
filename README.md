@@ -1331,6 +1331,158 @@ One more thing is need to take care about is that, this pin placement area is bl
 
 Before run the floorplanning, we required some switches for the floorplanning. We can get from the configuration from openlane.
 
+![image](https://user-images.githubusercontent.com/123365830/216519687-c2bac752-7942-4dd4-b09c-1238739d2095.png)
+
+Here we can see that the core utilization ratio is 50% (bydefault) and aspect ratio is 1 (bydefault). Similarly other information is also given. But it is not neccessory to take these values. we need to change these value as per the given requirments also.
+
+Here FP_PDN files are set the power distribution network. These switches are set in the floorplane stage bydefault in OpenLANE.
+
+![image](https://user-images.githubusercontent.com/123365830/216519873-748e9d23-ecf9-4a85-80bd-286c0b795ab9.png)
+
+Here, (FP_IO MODE) 1, 0 means pin positioning is random but it is on equal distance. In the OpenLANE lower priority is given to system default (floorplanning.tcl), the next priority is given to config.tcl and then priority is given to PDK varient.tcl (sky130A_sky130_fd_sc_hd_congig.tcl).
+
+Now we see, with this settings how floorplan run.
+
+Reviewing floorplan files and steps to view floorplan.
+
+In the run folder, we can see the connfig.tcl file. this file contains all the configuration that are taken by the flow. If we open the config.tcl file, then we can see that which are the parameters are accepted in the current flow.
+
+Commands used:
+
+	$ cd work/tools/openlane_woriking_directory/openlane/designs/picorv32a/runs/02-02.../
+	$ less config.tcl
+	
+![image](https://user-images.githubusercontent.com/123365830/216520701-1c513920-3216-4d38-8831-15408f33b41f.png)
+
+Here we can see that, the core utilization is 35%, aspect ratio is 1 and core margin is taken as 0. While in default the core utilization is 50%. This is the issue. because this design is override the system. but it is the taken from PDK varient.tcl file. So priority vise it is true.
+
+To watch how floorplane looks, we have to go in the results. In the result, one def( design exchange formate) file is available. If we open this file, we can see all information about die area (0 0) (660685 671405), unit distance in micron (1000). it means 1 micron means 1000 databased units. So 660685 and 671405 are databased units. and if we devide this by 1000 then we can get the dimensions of chips in micrometer.
+
+Commands used :
+
+	$ cd work/tools/openlane_woriking_directory/openlane/designs/picorv32a/runs/02-02.../results
+
+	$ less picorv32afloorplan.def
+	
+![image](https://user-images.githubusercontent.com/123365830/216522503-f20a914c-1469-47db-8a32-57690121d4ac.png)
+
+So, the width of chip is 660.685 micrometer and height of the chip is 671.405 micrometer.
+
+To see the actual layout after the flow, we have to open the magic file by adding the command,
+
+	$ magic -T /home/hsu_mon_maung/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read 	picorv32a.floorplan.def
+	
+And then after pressing the enter, Magic file will open. here we can see the layout.
+
+![image](https://user-images.githubusercontent.com/123365830/216522872-7c5e5950-1ccf-44ea-9f9e-aefcb144b032.png)
+
+### Reviewing floorplan layot with magic.
+
+In the layout we can see that, input output pins are at equal distance.
+
+![image](https://user-images.githubusercontent.com/123365830/216522976-0d7db1a7-b784-4143-8e5d-19decde66542.png)
+
+After selecting (To select object, first click on the object and then press 's' from keyboard. the object will hight lited. to zoom in the object, click on the object and then press 'z' and for zoom out press 'sft+z') one input pin. 
+
+![image](https://user-images.githubusercontent.com/123365830/216523169-e2ee346b-c276-44e7-bc4a-cabb26b59b34.png)
+
+If we want to check the location or to know at on which layer it is available, we have to open tkcon window and type "what". it will shows all the details about that perticular pin.
+
+![image](https://user-images.githubusercontent.com/123365830/216523115-11babade-1bd3-4d2e-9c3f-f4d83fa2e483.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216523228-8e978ff9-609a-425f-a575-a75db3db1c35.png)
+
+So, it show that the pin is in the metal 3.similarly doing for the vertical pins, we find that this pin is at metal 2.
+
+![image](https://user-images.githubusercontent.com/123365830/216523321-7ff8653e-0f7a-411c-ac85-0698d192b68a.png)
+
+Along with the side rows,the Decap cells are arranged at the border of the side rows.
+
+![image](https://user-images.githubusercontent.com/123365830/216523657-bf6ae6df-dc8c-4d52-9da0-c117c1f5ef80.png)
+
+Another cells also placed here, which is a tap cells. These cells are meant to avoide the latch-up problems in the CMOS devices. It connect N-well to the Vdd and substrate to the Ground. these tap cells are placed at diagonally equal distance.
+
+![image](https://user-images.githubusercontent.com/123365830/216523719-a9f22067-e36c-4216-967d-aa0c195d576b.png)
+
+In the floorplane, standerd cells are not placed but here standerd cells are available in the left side of the floorplan. we can see few boxes are there.
+
+![image](https://user-images.githubusercontent.com/123365830/216523762-ddec05d5-ba09-41ed-8245-a420e786a699.png)
+
+Here we can see that first standerd cells is for buffer 1. similarly other cells are for buffer 2, AND gate etc.
+
+### Library building and Placement
+
+#### Netlist binding and initial place design
+
+#### 1.bind netlist with physical cells
+
+Taking netlist as what we taken before,
+
+![image](https://user-images.githubusercontent.com/123365830/216523992-c2111a39-c507-40b5-9f81-ac50290b31f5.png)
+
+Here, we can see that every gate or flip-flops have a shape to understand the functionality of the element. But practically, this cells are square or rectangular boxes which has internally some logic to perform. So, here we are taking all the elements from netlist and giving them a perfact height and width with perticular dimention. These all cells together are called 'self'. And this self are stored in the lybrary. Library have all the innformation about all the blocks, like height, width , time delay, conditional innformation, etc. library also have a option for the similar cells (with same functionality) like this with different height and width. According to our space available at floorplanning we can choose out of them.
+
+![image](https://user-images.githubusercontent.com/123365830/216524021-3985ddd9-108d-462e-b0f2-0738c4d1a3b9.png)
+
+After giving size and shape to each and every box, next step is to take the boxes or element from library and placed in the floorplan. This is called placements of the cells.According to the design of the netlist, we have to put physical blocks in the floorplan which we have design before.Put all the blocks according to the input and output of that perticular blocks.
+
+![image](https://user-images.githubusercontent.com/123365830/216524069-78f8ad83-ab4e-49d2-8627-f53a8cbca987.png)
+
+Up to here we have done stage one and stage two placement. Now we will going for stage 3 and 4. here we have to place FF1 of stage 3 nearer to the Din3 and FF2 of stage 3 nearer to the Dout3. But Din3 and Dout3 are at somme distance from eachother. same thing is there for FF1 and FF2 of stage 4. Let's we placed these all element in such manner that all elements are closed to it's input and output pins.
+
+![image](https://user-images.githubusercontent.com/123365830/216524124-2d8af8cd-50af-41fc-a7b6-32b1ce965952.png)
+
+But, the distance of FF1 of Stage 4 and Din4 is still far them others. By optimizing the placement, we can solve this problem.
+
+### Optimize placement using estimated wire lenght and capacitance
+
+#### 2. Optimize Placement
+
+As we seen that the distance from Din2 to FF1 of stage 2 is higher. so if we connect the wire between them then resistance and capacitance of the wire comes in to the picture. and due to this the signal integrity can not maintain.
+
+To maintain the integrity of the signal out from Din2 to FF1, we have to put some repeaters like buffers on between Din2 and FF1. But it will cause of loss of area.
+
+In the stage 1, there is no need of any repeater to transmit the signal. But in stage 2, due to high distance, the lenth of wire is high and signal is not transmitted in perticular range. so we required repeater.
+
+![image](https://user-images.githubusercontent.com/123365830/216524249-9a34f371-828c-403d-8962-ee484165baf9.png)
+
+#### Final Optimization
+
+Similar as stage 2, in Stage 3 also we required the buffer between gate 2 and FF2.
+
+![image](https://user-images.githubusercontent.com/123365830/216524320-b7a0b84b-5007-4180-a0cf-1b604f5f519a.png)
+
+Now we have to check that, what we have done is correct or not. For that we need to do Timing analysis by considering the ideal clocks and according to the data of analysis, we will understand that, the placement is correct or not.
+
+### Need for libraries and characterization.
+
+#### Library charactorization and modelling
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
