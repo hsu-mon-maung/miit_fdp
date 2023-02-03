@@ -986,7 +986,7 @@ abc - Performs technology mapping
 
 OpenSTA - Pefroms static timing analysis on the resulting netlist to generate timing reports
 
-#### Floorplan and PDN
+#### 2.Floorplan and PDN
 
 init_fp - Defines the core area for the macro as well as the rows (used for placement) and the tracks (used for routing)
 
@@ -996,7 +996,7 @@ pdn - Generates the power distribution network
 
 tapcell - Inserts welltap and decap cells in the floorplan
 
-#### Placement
+#### 3. Placement
 
 RePLace - Performs global placement
 
@@ -1004,33 +1004,33 @@ Resizer - Performs optional optimizations on the design
 
 OpenDP - Perfroms detailed placement to legalize the globally placed components
 
-#### CTS
+#### 4. CTS
 
 TritonCTS - Synthesizes the clock distribution network (the clock tree)
 
-#### Routing *
+#### 5. Routing *
 
 FastRoute - Performs global routing to generate a guide file for the detailed router
 
 TritonRoute - Performs detailed routing
 
-#### GDSII Generation
+#### 6. GDSII Generation
 
 Magic - Streams out the final GDSII layout file from the routed def
 
-#### Checks
+#### 7. Checks
 
 Magic - Performs DRC Checks & Antenna Checks
 
 Netgen - Performs LVS Checks
 
-### OpenLANE ASIC Flow (Detailed)
+### 8. OpenLANE ASIC Flow (Detailed)
 
 ![image](https://user-images.githubusercontent.com/123365830/216042455-0611e571-f057-4610-a333-10d3ec218c50.png)
 
 The design exploration utility is also used for regression testing(CI). we run OpenLANE on ~ 70 designs and compare the results to the best known ones.
 
-### DFT(Design for Test)
+### 9. DFT(Design for Test)
 
 It perform scan inserption, automatic test pattern generation, Test patterns compaction, Fault coverage, Fault simulation
 
@@ -1201,6 +1201,148 @@ Before run, we saw that the result folder is empty. but now, after running the s
 And in the report, we can see when the actual synthesis has done. and the actual statistics synthesis report is showing below, which is same as what we have seen before.
 
 ![image](https://user-images.githubusercontent.com/123365830/216047111-e00f1b61-e7ce-407e-9841-2c7f0f04052e.png)
+
+# Day 8 Good Floorplanning Vs Bad Floorplanning and Introduction to Library Cells
+
+### Chip floorplanning considerations
+
+### Utilization factor and aspect ratio
+
+#### 1. defining the width and height of core and Die
+
+![image](https://user-images.githubusercontent.com/123365830/216516916-c24c9527-ed02-43f9-acc3-9b4ce4661e0b.png)
+
+Let's begin with netlist( Netlist describes the connectivity of an electronic designs). Considering a netlist with 2 flops and 2 gates.
+
+![image](https://user-images.githubusercontent.com/123365830/216516979-7e4cbc86-23fd-4462-afc2-1f9a619c7de0.png)
+
+Lets giving the height and width of standerd cell is 1 unit. So, the area of standerd cell is 1 square unit. And assuming the same area for the flip flops also. Now lets calculate the area occupied by the netlist on a silicon wafer by arranging them together. The total area occupied by netlist in silicon wafer is 4 square units.
+
+![image](https://user-images.githubusercontent.com/123365830/216517074-7b66da0d-5103-49d1-a2ff-abae8d69c65d.png)
+
+#### what is the core and die?
+
+A 'core' is the section of the chip where the fundamental logic of the design is placed.
+
+A 'Die', which is consist of core, is small semiconductor material specimen on which the fundamental circuits is fabricated.
+
+![image](https://user-images.githubusercontent.com/123365830/216517175-e0bf4a06-86a9-42b9-a45b-6f42c240f851.png)
+
+If we put the 'arranged netlist' in the core, then whole core is occupied by netlist. that means utilization of core is 100%.
+
+![image](https://user-images.githubusercontent.com/123365830/216517231-9e2c5233-b6d0-42dd-b22b-f30d39c24b11.png)
+
+#### Utilization factor
+
+It is defined as, 'the area occupied by netlist' devided by the 'total area of core'. So, in the above case, the utilization factor is 1. Practically, we don't go with 100% uti;ization and utilization factor is about 50%-60% to add other extra cells (like buffer) in the core after netlist is placed.
+
+#### Aspect Ratio
+it is defined as (height)/ (width). here in above example the aspect ratio is 1.
+
+### Concept of pre-placed cells
+
+#### 2. Define locations of preplaced cells
+
+To define the preplaced cells, let's take a combinational logic i.e., mux, multiplier, clock devider, etc. and assuming that the output of the circuit is huge and assuming that the circuit has some 100k gates. so let devides in two blocks of 50k gates.
+
+![image](https://user-images.githubusercontent.com/123365830/216517693-9503a509-bbcc-42c8-87d7-cb9b5a394d3c.png)
+
+This both blocks are implimented separatly. Now, extending the input and output pins from the both blocks and let's detached these box. We will black box the boxes and detached them. After black boxing, the upper portion is invisible from the top or invisible to the one , who is looking into the main netlist. now we make separate them out.
+
+![image](https://user-images.githubusercontent.com/123365830/216517833-9f7ccb23-7e1c-445b-83d5-f6f6c8a3f384.png)
+
+This blocks are implemented in netlist once and then we can reuse it multiple time. Similarly, there are other modules or IPs also readily available.i.e.,memory, clock gating cell, comparater, mux. these all are part of the top level netlist.They recieve some signals, they perform some functions, they deliver the outputs but the functionality of the cell is implemented only once. That what we called as preplaced cells.
+
+The arrangement of these ip's in a chip is refferd as floorplanning.These IP's have user-defined locations, and hence are placed in chip before automated placement and routing are called "preplacement cells".These cells are place din such fashion that, the placement and routing tool not touch the location of the cell.
+
+![image](https://user-images.githubusercontent.com/123365830/216517894-5f3c7d2d-023f-4833-ace0-1a2c50d481cb.png)
+
+Let consider memory as a preplaced cells as a block 'a', block 'b' and block 'c'. Memory of any device is implemented once and reused multiple times. These preplaced cells are located as per the design bacckground. the location of the cells are never touched.
+
+### De-coupling capacitors
+
+#### 3. Surround pre-placed cells with Decoupling capacitors
+
+Let consider some circuit, which is part of the blocks which were defined above. When some gate (let consider AND gate) switched from 0 to 1 ot 1 to 0, considered amount of the switching current required because of small capacitance is available there. This capacitor should be completely charged to represent logic 1 and completly discharged to represent logic 0. The required amount of the charge is suplied from the Vdd and absorb from the Vss. During supplying the current, wire has some drop of voltage due to resistence and inductunce of the physical wire.
+
+![image](https://user-images.githubusercontent.com/123365830/216518116-c37ff36a-aa04-4a7e-806e-f2a68bbe89e9.png)
+
+Therefore, due to this if ideal logic 1 = 1 volt then here practically it can be less then 1 volt i.e., 0.97 volts (Vdd'). So, for any signal to be considered as Logic '0' and '1' in the NM low and NM high range. It is danger case.
+
+![image](https://user-images.githubusercontent.com/123365830/216518180-5f4100e7-9e8a-46a6-b868-140faee3d6ab.png)
+
+To solve this problem,, we have to put De-coupling capacitor in parallel with the circuit. Every time the circuit switches, it draws current from Cd, whereas, the RL network is used to replacenish the charge into Cd.
+
+![image](https://user-images.githubusercontent.com/123365830/216518219-d2a58a90-8f69-4c37-96f7-9b95731cad65.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216518234-59691c97-4096-460e-941e-461a82e680fb.png)
+
+#### 4. How to do power planning?
+
+Up to here, we have taken care of local communication. Now let consider that local circuitory as a black box and it can be repeat multiple times and power supply is also connected to all of them as shown below.
+
+![image](https://user-images.githubusercontent.com/123365830/216518353-164c51aa-74f1-4361-9c3b-fd7e5b83b583.png)
+
+Now 16 bit bus has to retain the same signal from driver to the load. so it should get the sufficient power from the supply. But at this bus, there is no de-coupling capacitor is available because it is not physible to put capacitor at all over the place. now, power supply is far away from the bus, that is why some drop between them will definalty occurs.
+
+Let consider this 16 bit bus connected to inverter. So, all capacitor are initially charged will get discharged and vice-versa due to inverter.
+
+![image](https://user-images.githubusercontent.com/123365830/216518407-dfa0231e-7fec-452a-94e8-e2f88df2252c.png)
+
+But the problem is occurs due to all capacitor is connected to the single ground. This will cause a bump in 'ground' tap point during discharging.
+
+![image](https://user-images.githubusercontent.com/123365830/216518460-815b6408-5da9-423f-8e1f-71d4ba796aef.png)
+
+Same problem will occurse during the charging time also. at that time lowering of voltage occurse at 'Vdd' tap point.
+
+![image](https://user-images.githubusercontent.com/123365830/216518593-3265e5c1-a1b4-490b-ae85-b48fd452f7ae.png)
+
+The solution of the problem is use multiple power supply. So, every block will take charge from neartest power supply and similarly dump the charge to the nearer ground. this type of power supply is called mesh.
+
+![image](https://user-images.githubusercontent.com/123365830/216518624-3fdf1ea2-81cb-4f4b-a291-32743e4fea6f.png)
+
+And the power planning is shown below,
+
+![image](https://user-images.githubusercontent.com/123365830/216518669-c47939f0-6de5-49a0-b947-ed7c7b5306ab.png)
+
+### Pin placement and Logic floor planning considerations
+
+#### 5. Pin Placement
+
+Lets take below designs for example that needs to implemented.
+
+
+![image](https://user-images.githubusercontent.com/123365830/216518739-9c89cfc9-cf6b-468f-907c-c8841a92ca3e.png)
+Both the sections has different inputs like Din1 and Din2 and operated from different clocks like clock 1 and clock 2. along with that we have preplaced cells as well. So, basically now we have 4 input ports and 3 output ports.
+
+Let's have one more design that needs to be implemented. This types of circuits are very much helpful to understand the timing analysis of inter clocks.Now complete design becomes like given below which has 6 input ports and 5 output ports. it is called the 'Netlist'.
+
+![image](https://user-images.githubusercontent.com/123365830/216518831-2660089f-16e4-401e-bad8-e212bac59292.png)
+
+Let's put this netlist in the core which we have designed before and let's try to fill this empty area between core and die with the pin information. The frontend team who decides the netlist input and output and the backend team who done the pin placements. So according to the pin placements, we have to locate the preplaced blocks nearer to the inputs of the preplaced blocks.
+
+![image](https://user-images.githubusercontent.com/123365830/216518880-4d15cb0b-11ca-41ad-9d62-9d248556be27.png)
+
+Here one thing that we noticed is that clock-in and clock-out pins are bigger in size as compared to input and output pins. Reason behind this is that, input clocks are conntinuously provides the signal to the every elements of the chip and output clock should out the signal as fast as possible. So, we need least resistance path for the clocks inputs and clocks outputs. So, bigger the size, lower the resistance.
+
+One more thing is need to take care about is that, this pin placement area is blocked for routing and cell placements. Therefore, we nned to do logical cell placement blockage. This blockage is shoown in above image in between pins. So, floor plan is ready for Placement and Routing step.
+
+## Steps to run floorplan using OpenLANE
+
+Before run the floorplanning, we required some switches for the floorplanning. We can get from the configuration from openlane.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
