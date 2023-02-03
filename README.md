@@ -1638,6 +1638,68 @@ Let's take waveform for understand the slew calculation.
 
 ![image](https://user-images.githubusercontent.com/123365830/216526969-b9d5e265-e519-4354-9bca-ed722f2e4fd4.png)
 
+# Day 9 -Design library cells using Magic Layout and ngspice characterization
+
+## Labs for CMOS inverter ngspice simulations
+
+## SPICE deck creation for CMOS innverter
+
+### IO placer revison
+
+Till now, we have done floor planning and run placement also. But if we want to change the floorplanning, for example, in our floor planning, pins are at equal distance and if we want to change it then we can also make it by "Set" command.
+
+	% set ::env(FP_IO_MODE) 2
+	
+![image](https://user-images.githubusercontent.com/123365830/216665081-d645d384-e74b-4562-83d6-31f0d2e6fd87.png)
+
+For that first we have to check the swithes in the configuration and from that we have to take the syntax "env(FP_IO_MODE) 1". and make it to the "env(FP_IO_MODE) 2". then again run the floorplanning.
+
+Then check the changes in the pins location through magic -T.
+
+![image](https://user-images.githubusercontent.com/123365830/216665177-c51795d3-a29f-4b7a-ab0d-2ed310278b25.png)
+
+So, here we can see that there are no pins in the upper half side. all pins are in the lower half of the core.
+
+### SPICE deck creation for CMOS inverter
+
+#### VTC- SPICE simulations
+
+Before entering into the simulation, we have to creat the spice deck. The spice deck is nothing but netlist. so, we have to creat the spice deck for CMOS.
+
+* Component connectivity
+
+![image](https://user-images.githubusercontent.com/123365830/216665573-e7f0b1c2-c9e5-4373-af98-59ad979516f1.png)
+
+* Define the components values
+
+![image](https://user-images.githubusercontent.com/123365830/216665651-5f96fc3d-78be-45df-a7ca-6f29b1eb2fd1.png)
+
+* Identyfy the nodes
+
+![image](https://user-images.githubusercontent.com/123365830/216665714-4418a344-ab4f-4bf3-b37c-049c731975ef.png)
+
+* Name 'Nodes'
+
+![image](https://user-images.githubusercontent.com/123365830/216665765-49fc87db-25e6-4d06-a598-b0387ae7da33.png)
+
+Now, let's strat the writing the SPICE deck
+
+![image](https://user-images.githubusercontent.com/123365830/216665863-d57cb279-cfde-4ff4-85b7-764c7f7e1880.png)
+
+Here, in the syntex, It is like Name of the mosfet, drain , gate, substrait , source. so, the meaning of the syntex is that, name of the mosfet is M1, Drain is connected to OUT node, Gate is connected to IN node, Substrait is connected to Vdd and the Source is connected to Vdd node. PMOS says the type of mosfet and the Width and lenth of channel is defined. similarly, For M2, syntex were written.
+
+### SPICE simulation lab for CMOS
+
+Tile we discribe the connectivity information about CMOS inverter only. Now we have to discribe connectivity information about other components also like source, capacitor etc. so, lets look into the other components.
+
+First we discribe the load capacitor and then about the Vdd and Vin.
+
+![image](https://user-images.githubusercontent.com/123365830/216665993-06136d98-6e2d-45cc-97ba-ef311528829b.png)
+
+
+
+
+
 
 
 
