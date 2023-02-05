@@ -2052,6 +2052,145 @@ it is the time difference between the 50% of input and 50% of the output.
 
 so,propagation delay = (2.18045-2.15013)e-09 = 0.03 nsec.
 
+# DAY 10 Pre-layout timing analysis and importance of good clock tree
+
+## Timing modelling using delay tables
+
+### Lab steps to convert grid info to track info
+
+Till now we have done synthesis, floorplaning, placement and how to extract the spice out of it, done charecterization of it. till now, for placement and routing, we doesn't required any information about input/output port,logic path, power, ground.
+
+Now the concept of 'lef' file will comes into the picture. it contains all the information which we discuss earlier. so our next objective is to extract the '.lef' file out of the '.mag' file. and next step is that extracted file could be placed into the picorv32a flow.
+
+you need to folow certain guideline while making standerd cells.the guidelines are
+
+* The input and output port must lie on the intersection of the verticle and horizontal tracks
+
+* The width of the satnderd cell should be odd multiple of the track pitch and the height should be odd multiple of track verticle pitch
+Now oprning the track file from the pdk/sky130/libs.tech /openlane/sky130_fd_sc_hd/track.info. where we get the info like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216833260-dcf74933-830e-4805-89b9-a4406a8bfdec.png)
+
+so, the track is basically nothing but it is used during the routing stage.Rout will be go over the tracks. tracks are basically trases of matel layers.i.e., metal 1, matel 2, etc.
+
+PNR is a automated. so we need to specified, where from we want routs to go. this specification is given by tracks. here we can see that each of the tracks are placed at (0.23 0.46)um horizontaly and (0.17 0.34)um vertically for li1, metal 1, metal 2 layer.
+
+In layout, we can see that the ports are on the li1 layer. so we need to insure that the ports are on the intersection of the tracks or not. For that we have to cinvert the grid into the tracks. for that we have to first into the tracks file and the open the tckon window and type the "help grid" comand.
+
+![image](https://user-images.githubusercontent.com/123365830/216833285-a75860b9-2276-4425-9531-7acd37a2e479.png)
+
+Then again write comand according to the track file.
+
+![image](https://user-images.githubusercontent.com/123365830/216833312-2b5e24fd-9d23-4e9e-9993-fd2d783d3578.png)
+
+Let's see the changes in the layout.
+
+![image](https://user-images.githubusercontent.com/123365830/216833319-9c3afba6-1af3-46b7-8474-9ba125085393.png)
+
+Here we can see that, as per the guideline the ports are placed at the intersection of the tracks.
+
+now, between the boundaries, there is 3 boxes are coverd. so our second requirment also satisfied here.
+
+### Lab steps to convert magic layout to std cell LEF
+
+here already the port name and the port definationa is seted, if not seted the we have to set the definanation and the name of the port.
+
+As it parameters are set, we are ready to extract the 'LEF' file from the "mag" file. but before the extraction, let give the name to the cell by using tckon window.
+
+Now we can see this file in the vsdstdcellsdesign folder.
+
+Now, we open this file in the magic by using comand "magic -T sky130A.tech sky130_vsdinv.mag &".
+
+Now to extract the lef file we have to write the comand in the tckon window "lef write". so it will create a lef file and we can check it in the vsdstdcellsdesign folder.
+
+![image](https://user-images.githubusercontent.com/123365830/216833362-f387c4ef-26c8-4db8-963d-2539a7c9c234.png)
+
+Now, lef file is created and now next step is plug this lef file in picorv32a. before that we move our files to src folder where all the design files are available at one location.
+
+for that we are copiying this file in the src folder by 'cp' comand.
+
+### Introduction to timing libs and steps to include new cell synthesis
+
+The basic idea is that we have to include our custom cell into openlane flow. and the first stage in the openlane is the synthesis.
+
+here, also we required library. so we copiying the library to the src folder.
+
+Before we do anything, we have to modified our congig.tcl file. so opening this file by "vim" comand and modifiying it.
+
+Now, start the new terminal and open the openlane by docker, make flow interactive and then add the package and then prep design with the privios run by the comand " prep -design pecorv32a -tag [last running time i.e.27-01_17-53] -overwrite".
+
+Now comes the deciding part. we have to see that the synthesis run and its maps our custom vsd inveter into this flow. so, run the synthesis.
+
+### Introduction to delay tables
+
+Power Aware CTS
+
+If we make enable pin at logic '1' in the AND gate, the clock will propogatee to the AND gate. similarly, if we make enable pin at logic '0' in the OR gate, here also clock propogate to the OR gate.
+
+Similarly if we make enable pin at logic 'o' in the AND gate, gate will block the clock and same this will happend with the OR gate if we make enable pin at logic '1'.
+
+The advantage of this scenario is that, during this time period of the blocking the clocks, we can save lots of power in the clock tree. now the question is that how can we use this scenario in the clock tree.
+
+let say we have a clocktree like this given below,
+
+![image](https://user-images.githubusercontent.com/123365830/216833462-5028abbf-de42-4606-b08c-edb907e778e9.png)
+
+Here we spitted the load of the 4 FF into the 2 buffers and the load of the 2 buffers is given to the level 1 buffer. here assumptions are,
+
+* Assume c1=c2=c3=c4=25fF
+
+* Assume Cbuf1=Cbuf2=30fF
+
+* Total Cap at node 'A'=> 60fF
+
+* Total Cap at node 'B'=> 50fF
+
+* Total Cap at node 'C'=> 50fF
+
+We have done some observations here,
+
+* 2 levels of buffering
+
+* At every level,each node driving same load
+
+* Identical buffer at same level
+
+so, here capacitance at the every node of the clock tree is not the same. it is varying. Now load is varying then input transition is also verying because the output load at the level 1 buffer is the input of the other buffers of level 2. so, we have variety of the delays. To capture it, we have delay tables.
+
+How delay tables are prepared?
+To prepare the delay table, the perticukar element is taken out of the circuit and saparetly verying the input transition and output load and according to the variation, we will charactorize the delay of the element and make the delay table frpm it.
+
+![image](https://user-images.githubusercontent.com/123365830/216833547-f86031a6-d763-4777-a5ff-9f917c3e36ac.png)
+
+### Delay table usage part 1
+
+Let's looks into the sample examples and making the table for Cbuf'1' and Cbuf'2',
+
+![image](https://user-images.githubusercontent.com/123365830/216833584-8f315743-d51a-43da-97f4-e270c9cb36bf.png)
+
+let's take practical example on the circuit. we take 40psec as input transition on the level 1 buffer and as per assumption load is around 60fF. and delay is comes between x9 and x10. lets take x9' as the delay of the buffer of level 1.
+
+### Delay table usage part 2
+
+Next step is to calculate the delay of the buffers of level 2. And after that we can find the letancy at the 4 clock end points.
+
+now input transition is common for both the buffers. now assuming that the transition is around the 60psec and load at both the buffers is 50fF. so it will give the delay of y15.
+
+The total delay from input to the output is= x9' + y15.(here we are ignoring the delay of the wires). that means the skew at the any output point is zero.
+
+If load is not same at the every nodes, the skew will not be the zero.
+
+### Lab steps to configure synthesis settings to fix slack and include vsdinv
+
+After synthesis, we observed that the slack is nagative here. wns(worst negative slack)= -24.89 and tns(total negative slack)= -759.
+
+![image](https://user-images.githubusercontent.com/123365830/216833634-5b95b14c-c4ea-4ff4-9cf2-228848a64780.png)
+
+
+
+
+
+
 
 
 
