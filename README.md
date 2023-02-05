@@ -1696,6 +1696,376 @@ First we discribe the load capacitor and then about the Vdd and Vin.
 
 ![image](https://user-images.githubusercontent.com/123365830/216665993-06136d98-6e2d-45cc-97ba-ef311528829b.png)
 
+Now, we have to give simulation command. which is about swiping the Vin from 0 to 2.5 with the steps of 0.05. Because we want Vout while changing the Vin.
+
+![image](https://user-images.githubusercontent.com/123365830/216822105-4f0b99d2-523e-4b47-943d-a07dc85538eb.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216822117-bb2036b2-f577-4128-916c-7c5597aea3e1.png)
+
+The final step is to discribe the Model file.Model file contains all the details about PMOS and NMOS. from this file only we get the information about PMOS and NMOS.
+
+![image](https://user-images.githubusercontent.com/123365830/216822127-b28fd3e8-4444-489a-87df-2aa0f5955fdc.png)
+
+So, the total program is given below,
+
+![image](https://user-images.githubusercontent.com/123365830/216822143-7cd21237-1666-4c1d-9c55-56e494e0ef50.png)
+
+Now, doing the simulation and get the graph like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216822155-a9fe3df2-a5f4-48d0-9844-b4bdaefdaada.png)
+
+Now, doing other simulation in which we change the PMOS width to 3 times of NMOS width. and after diong the simulation, we get the graph like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216822206-fdfcf4f7-863a-4abd-8608-493dead1ff8f.png)
+
+The difference between this two graph is that in the second graph the transfer charactoristic is lies in the ecxact middle of the graph where in the first graph it is lies left from the middle of the graph.
+
+### Switching Thresold Vm
+
+These both model of different width has their own application. By comparing this both waveform, we can see that the shape of the both waveform is same irrespective of the voltage level.
+
+This thing tell us that when Vin is at low, output is at high and when Vin is at high, the output is at low. so the charactoristic is maintain at all kind of CMOS with different size of NMOS or PMOS. That is why CMOS logic is very widely used in the design of the gates.
+
+Switching thresold, Vm (the point at which the device switches the level) is the one of the parameter that defined the robustness of the Inverter. Switching thresold is a point at which Vin=Vout.
+
+![image](https://user-images.githubusercontent.com/123365830/216822252-8a6b01b5-7980-40c5-b826-8161565aacce.png)
+
+In this figure, we can see that at Vm~0.9v, Vin=Vout. This point is very critical point for the CMOS because at this point there is chance that both PMOS and NMOS are turned on. If both are turned on then there is chances of leakage current(Means current flow direcly from power to ground).
+
+By comparing this both the graph we can understang the concept of switching thresold voltage.
+
+![image](https://user-images.githubusercontent.com/123365830/216822265-cb901de9-a50b-439c-8f69-95c0e41181f2.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216822273-d947989a-fc1f-4842-b57b-3b4938ad2a36.png)
+
+### Lab steps to git clone vsdstdcelldesign
+
+To get the clone, copy the clone address from reporetery and paste in openlane terminal after the command "git clone". this will create the folder called "vsdstdcelldesign" in openlane directory.
+
+	$ cd work/tools/openlane_working_dir/openlane
+	
+	$ git clone https://github.com/nickson-jose/vsdstdcelldesign.git
+	
+![image](https://user-images.githubusercontent.com/123365830/216822377-223f2134-d77c-40ee-8b50-9bd23d464855.png)
+
+now, if we open the openlane directory, we find the vsdstdcelldesing folder in the openlane directory.
+
+![image](https://user-images.githubusercontent.com/123365830/216822456-4e773e19-90ca-4add-b246-b8019182d834.png)
+
+Now if we goes in the vsdstdcelldesign folder and open it, we get the .mag file,libs file etc.
+
+![image](https://user-images.githubusercontent.com/123365830/216822575-0f65ddfc-f70d-49e9-90e8-9baabf14c2f4.png)
+
+Now, let's open the .mag file and see that which layers are used to build the inverter. But before opening the mag file, we need tech file. so we will copy this file from this given below address. And do copy by "cp" command to the location which is given below,
+
+![image](https://user-images.githubusercontent.com/123365830/216822610-1fa7f2f3-0b82-4e6a-a186-dfd5e4a6ac6f.png)
+
+Now, we can see that this file is copied in the vsdstdcelldesign folder.
+
+![image](https://user-images.githubusercontent.com/123365830/216822662-1a36d27c-d226-408e-bd3e-1a334db6a4dc.png)
+
+Now, here to see the layout in magic, we don't need to write the whole address because we copy the tech file here.
+
+Now, appying the magic comand like this,
+
+	$cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesigns
+
+	$magic -T sky130A.tech sky130_inv.mag &
+	
+Now, we can see the layout of CMOS inverter in the magic like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216822842-eee61873-1885-4dc4-8eab-fa307ed16e06.png)
+
+### Inception of layout CMOS fabrication process
+
+### create active region
+
+#### 1) selecting a substrate
+
+we select P-type silicon substrate with high resistivity(5~50 ohms) with moderate dopping and orientation is (100).
+
+#### 2) creating active region for transister
+
+First, we create the isolation layer by depositing the Sio2 layer (~40nm) on the substrate.
+
+![image](https://user-images.githubusercontent.com/123365830/216822933-934e5e33-e8ca-4fef-ba99-766728447f13.png)
+
+Now, we are depisiting the Si3N4 layer (~80 nm) on the Sio2 layer.
+
+![image](https://user-images.githubusercontent.com/123365830/216822952-40943344-ab1f-486b-8df6-5b888d9a00be.png)
+
+Now we do patterning by using depositing photoresist and using Mask 1 through UV light.
+
+![image](https://user-images.githubusercontent.com/123365830/216822977-e018d47c-f991-4b96-b922-7b69f5709b09.png)
+
+Now, first we remove the mask and doing etching of Si3N4 layer on the exposed area.
+
+![image](https://user-images.githubusercontent.com/123365830/216823004-710be873-6fb5-4576-aad0-9305fd523e45.png)
+
+Now, next step is to remove photoresist by chamical reaction, because now to Si3N4 layer itslef behaves like good protecting layer for Sio2 layer. now, if we do LOCOS (local oxidation of silicon) process, the exposed sio2 part will gown and bird break also form. This grown sio2 will provide the perfect isolation between two PMOS and NMOS.
+
+![image](https://user-images.githubusercontent.com/123365830/216823029-7a8d7c89-d6f6-4413-92f7-63e0765ecbd8.png)
+
+Next step is to etchout the Si3N4 layer by hot phosphoric acid.
+
+![image](https://user-images.githubusercontent.com/123365830/216823064-7756a0c5-3e73-4a56-a349-d1e1b2517a4f.png)
+
+### Formation of N-well and P-well
+
+#### 3) N-well and P-well formation
+
+we can not form P-well and N-well at a same time. we have to protect a region while forming one of the region by photoresist. And then using mask 2 and UV light, we will do patterning of photoresist to form P-well.
+
+![image](https://user-images.githubusercontent.com/123365830/216823122-0247280e-0488-4296-84a2-625cc40ace81.png)
+
+Now, the area where we want to form the P-well is exposed. now we remove the mask and by applying the ion implantaton method (~200kev)to form P-well using Boron. But still it is P implant. After performing the high temparature anneling, it will become P-well.
+
+![image](https://user-images.githubusercontent.com/123365830/216823165-9b86d6ed-f47e-4887-94aa-09e70177ce9b.png)
+
+We wiil do a similar process to form N-well by using mask 3 and using Phosphorus ions.
+
+![image](https://user-images.githubusercontent.com/123365830/216823188-1e6d08fe-f8d2-4eba-b864-2deac1f9b726.png)
+
+till now depth of wells are not define. so, by putting into the high temparature furnace (drive-in diffusion), we will define the depth of wells.
+
+![image](https://user-images.githubusercontent.com/123365830/216823227-4c8b9cad-b042-4278-830f-4214e785b364.png)
+
+### Formation of gate terminal
+
+#### 4)Gate formation
+
+Gate terminal is the most important terminal of the PMOS and NMOS because from the gate terminal only we can control the thresold voltage. doping concentration and oxide capacitance will control the thresold voltage.
+
+so, first we are maintain the doping concentration here. for that we use mask 4 and again doing the ion implantation of boron ion at lower energy (~60kev).
+
+![image](https://user-images.githubusercontent.com/123365830/216823248-d6e1fa19-46a6-4be5-9fb7-18826fe8f21b.png)
+
+same process we will repeat for N-well also by using mask 5 and Arsenic ion.
+
+![image](https://user-images.githubusercontent.com/123365830/216823266-b19e6e6a-b957-4764-9744-7c14dd66d156.png)
+
+Next step is that we have to fix the oxide layer. but before that we have to remove the oxide layer because this layer is got dammeged because of the privious processes. so,first we remove the layer using HF solution and again re-grown the high quality oxide layer with same thickness.
+
+The final step is the deposition of polysilicon layer over oxide layer with more impurities for low resistance gate terminal.Then etched out this polysilicon layer by using mask 6 and photoresist.
+
+![image](https://user-images.githubusercontent.com/123365830/216823291-8665bd0e-cd7a-4509-94de-42159889094a.png)
+
+After etching, remove the photoresist and gate terminal looks like,
+
+![image](https://user-images.githubusercontent.com/123365830/216823305-992ba464-38f9-4807-aa2e-22e1dddf9400.png)
+
+### Lightly doped drain (LDD) formation
+
+#### 5) LDD formation
+
+Here, we actully want P+,P-,N doping profile in the PMOS and N+,N-,P doping profile for NMOS. Reason for that is
+
+* Hot electron effect
+
+* short channel effect
+
+For the formation of LDD, we again do ion implantation in P-well by using mask 7 and here we use phosphoros as a ion for light doping.
+
+![image](https://user-images.githubusercontent.com/123365830/216823360-98dbc2b7-4e61-4b51-9e7b-6da2942f5369.png)
+
+Same process we will repeat for N-well. there we use mask 8 and BOron Ion.
+
+![image](https://user-images.githubusercontent.com/123365830/216823378-6d50adbd-a0c3-4231-bf25-2c33a2e6aecf.png)
+
+Now, by creating the spacers, we can protect the actual structre remain constant of P-implantt and N-implant. For that we deposite a thick Sio2 or Si3N4 layer over the gate tereminal.
+
+![image](https://user-images.githubusercontent.com/123365830/216823406-b097eff3-36dc-47f9-a86a-883764ed72ca.png)
+
+Now, we do Plasma anisotropic etching. By that side-wall spacers are formed.
+
+![image](https://user-images.githubusercontent.com/123365830/216823425-b07a918a-4733-4c5f-9003-4b176caeb9b6.png)
+
+### Source and drain formation
+
+#### 6)source-drain formation
+
+Next step is deposite the very thin screen oxide layer to avoid the effect of channeling.
+
+![image](https://user-images.githubusercontent.com/123365830/216823475-d4e383b1-1d14-477f-a927-82189ba40ba9.png)
+
+Now to form the drain and source, again we do the ion implantation of arsenic at 75kev to create the N+ implant by using mask 9 in the P-well to form PMOS.
+
+Same process we will repeat for NMOS by using the mask 10 and boron ion in the N-well at 50kev to creat P- implant.
+
+![image](https://user-images.githubusercontent.com/123365830/216823495-d3fce123-eb8f-47b2-b03b-da2372ef0b78.png)
+
+Now we put this Half made CMOS into the high temparature (1000 degree)anneling. So P+ implant and N+ implant now become the source and drain.
+
+![image](https://user-images.githubusercontent.com/123365830/216823517-16cfbb1b-3b86-4fe2-a68d-60404de7ef85.png)
+
+### Local interconnect formation
+
+#### 7)steps tp form contacts and local interconnects
+
+First step is remove the thin screen oxide layer by etching. Then deposite the titanium (Ti) using sputtering. here Ti is used because Ti has very low resistivity.
+
+![image](https://user-images.githubusercontent.com/123365830/216823545-1d156c3c-5690-4592-8613-2289265de57c.png)
+
+Next step is to create the reaction between Ti layer and source, gate, drain of CMOS. For that wafer is heated at about 650-700 degree temparature in N2 ambient for about 60 seconds. and after reaction, we can see the titanium siliside over the wafer. One more reaction is heppend there between Ti and N. and it results the TIN which is used for local communication.
+
+![image](https://user-images.githubusercontent.com/123365830/216823570-89f8c23c-83ad-4727-a5db-260001a8eada.png)
+
+Now by using mask 11 and photoresist, we will etched out the TIN and make perticular contacts. TIN is etched out by using RCA cleaning.
+
+![image](https://user-images.githubusercontent.com/123365830/216823587-1da092ca-337b-4211-b7f7-3002ea4bde12.png)
+
+Now, local interconnects are formed after etching and removing the photoresist.
+
+![image](https://user-images.githubusercontent.com/123365830/216823604-77a049bb-a8fd-4d84-85a9-3c4987480156.png)
+
+### Higher level metal formation
+
+#### 8)Higher level metal formation
+
+These steps are very semilar like previous steps. First thing that we are noticing is that the surface is non planner. it is not good to use this type of non planner serface for matel interconnects because of the problems regarding the metal disconinuty. so, we have to plannerize the surface by depositing the thick layer of sio2 with some impurity to make less resistive layer. and then we used CMP (chemical mechanical polishing) technique to plannerise the surface.
+
+![image](https://user-images.githubusercontent.com/123365830/216823633-8604888e-aa69-4631-9885-a8cdfd63d25c.png)
+
+Now using mask 12 and photorsist we etched the sio2 layer to diposite the metal in it.
+
+![image](https://user-images.githubusercontent.com/123365830/216823641-b556371c-ba4f-4268-b01c-05271786607c.png)
+
+Now remove the photoresist and seposite the thin later of TIN (~10nm) over the wafer. Because TiN is act as very good adession layer for sio2 and also act as a barrier between bottom layer and top layer of metal interconnects.
+
+![image](https://user-images.githubusercontent.com/123365830/216823656-2fc2a5f5-9d1f-492b-afbe-ecf1ad24c220.png)
+
+Next step is to deposite the blanket tungsten (W) layer over the wafer. and then do the CMP here to plannerize the surface.
+
+![image](https://user-images.githubusercontent.com/123365830/216823681-36434fff-22ca-4fbb-9a1d-822efb22dce0.png)
+
+This W is act as a contact holes and this holes needs to connect to the Higher metal layer. so we will deposite the Al (aluminium) layer.
+
+![image](https://user-images.githubusercontent.com/123365830/216823692-2e7333d6-9bef-4b1e-b6f9-ce4f288ac7c4.png)
+
+Then by using the mask 13 and photoresist, we etched the W layer out to form the contact at perticular place by Plasma etching.
+
+![image](https://user-images.githubusercontent.com/123365830/216823719-db19f786-db94-4a11-95b8-4ebfa1ee7777.png)
+
+This is our first level of metal interconnets. now we again do the same process as above to deposite the second level of metal interconnect by using mask 14 for etched out the sio2 and using mask 15 for etched out Al leyer.
+
+![image](https://user-images.githubusercontent.com/123365830/216823728-1eefe0cb-ae6f-4ce7-a1c7-c595505bba4d.png)
+
+The upper layer of Al is bit thicker as compared to lower layer of Al.Now, again deposite the layer of sio2 or si3N4 to protect the chip.
+
+![image](https://user-images.githubusercontent.com/123365830/216823744-2ed1fb3c-78df-4ad3-8049-c2a3a8edd910.png)
+
+And finally our CMOS is looks like this after the fabrication.
+
+![image](https://user-images.githubusercontent.com/123365830/216823765-8a8eed52-e59f-43ec-ae36-e349d732c487.png)
+
+### Lab introduction to Sky130 basic layer layout and LEF using inverter
+
+![image](https://user-images.githubusercontent.com/123365830/216823786-358a59a3-c7a0-444b-8af9-f503beb00959.png)
+
+In sky130, every color is showing the different layer. here the firsst layer is for local interconnect shown by blue_perpel color, then second layer is metal 1 which is showm by light perple color, and the metal 2 is shown by pink color. N-well is showm by solide das line. green is N-diffusion region. and red is for polysilicon gate. similarly the brown color is for P-diffusion.
+
+In tckon window, we can see that the selected area is NMOS and similarly we can chech PMOS also. and that is how we can check that the CMOS is working or not.
+
+![image](https://user-images.githubusercontent.com/123365830/216823812-73f352af-91dc-4158-8820-f6874737b17d.png)
+
+semilarly we check for the output terminal also.(by double pressing "S" to select the entire thing at output Y).
+
+![image](https://user-images.githubusercontent.com/123365830/216823827-431aa4cb-6350-4848-b260-e97aa5b60dae.png)
+
+so, we can see that "Y" is attached to locali in cell def sky130_inv.
+
+we can check the source of the PMOS is connected to the ground or not. and similarly we can check it for NMOS also.
+
+### Lab steps to create std cell layout and extract spice netlist
+
+To extract the file from here, we have to write the command in tckon window. and the comand is "extract all".
+
+![image](https://user-images.githubusercontent.com/123365830/216823885-93b20537-c6d1-436e-9634-c6719e6646c3.png)
+
+Now let's go to this location from the terminal. it is exctracted.
+
+![image](https://user-images.githubusercontent.com/123365830/216823941-583581b4-ed68-4deb-a7bd-04888b386d3f.png)
+
+we will use this .ext file to create the spice file to be use with our ngspice tool. for that we have apply the comand "ext2spice cthresh 0 rthresh 0". this will not create anything new. now again we have to type "ext2spice" comand in tckon window.
+
+![image](https://user-images.githubusercontent.com/123365830/216823962-db31d30a-cb3c-4e89-b12b-3012d90b598f.png)
+
+let's see what inside the spice file by "vim sky130_inv.spice".
+
+![image](https://user-images.githubusercontent.com/123365830/216824015-b72837e6-caac-4683-b643-fabcec9142be.png)
+
+### Sky130 Tech File labs
+
+### Lab steps to create final SPICE dexk using sky130 tech.
+
+![image](https://user-images.githubusercontent.com/123365830/216824050-199ccbf0-4653-408a-9683-9d3472f96e3c.png)
+
+here, we can see the all details about the connectivity of the NMOS and PMOS and about the power supply also.
+
+X0 is NMOS and X1 is PMOS and both's connectivity is shown as GATE DRAIN SUBSTATE SOURCE.
+
+But here the scale is 10000 um. but in Magic simulation, it is 0.01.
+
+![image](https://user-images.githubusercontent.com/123365830/216824068-017a1004-46b9-40d6-b01c-59015b2170a1.png)
+
+SO, we are going to change the dimension here in the terminal. so any measurement will be in this scale of 0.01u. i.e., width=37*0.01u.
+
+Now we have to include the PMOS and NMOS lib files. it is inside the libs folder in the vsdstdcellsdesign folder.
+
+![image](https://user-images.githubusercontent.com/123365830/216824090-705b49a6-2dcf-4c6c-94b5-8c1ad53fae80.png)
+
+so, now we include this file in the terminal by ".include ./libs/pshort.lib" and ".include ./libs/nshort.lib" comand.
+
+And then set the supply voltage "VDD" to 3.3v by "VDD VPWR 0 3.3V" comand. and similarly set the value of VSS also.
+
+Now, we need to specify the input files. by Va A VGND PULSE(0V 3.3V 0 0.1ns 2ns 4ns).
+
+Also add the comand for the analysis like, ".tran 1n 20n", ".control" , "run",".endc",".end".
+
+![image](https://user-images.githubusercontent.com/123365830/216824107-d216fbaf-68a1-477e-9718-7f1ed72bf836.png)
+
+after running this file we get output of ngspice like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216824125-6049713a-abbb-412e-b3ec-08ee610c4397.png)
+
+Now, ploting the graph here by comand, "plot y vs time a".
+
+![image](https://user-images.githubusercontent.com/123365830/216824144-6f6ad28c-12e0-4f6f-b57f-8a89122e89dd.png)
+
+### Lab steps to characterize inverter using sky130 model file
+
+Here, we have to find value of 4 parameters.
+
+* rise time
+
+it is time taken to the output waveform to 20% value to 80% value.
+
+![image](https://user-images.githubusercontent.com/123365830/216824174-91734c10-dd8b-46e4-a71c-28aff473c538.png)
+
+so, rise time= (2.19857-2.18002)e-09 = 0.0185 nsec.
+
+* propogation delay
+
+it is the time difference between the 50% of input and 50% of the output.
+
+![image](https://user-images.githubusercontent.com/123365830/216824215-7e31dd0f-3732-4552-9c76-5c0a93061e5c.png)
+
+so,propagation delay = (2.18045-2.15013)e-09 = 0.03 nsec.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
