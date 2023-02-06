@@ -2052,6 +2052,22 @@ it is the time difference between the 50% of input and 50% of the output.
 
 so,propagation delay = (2.18045-2.15013)e-09 = 0.03 nsec.
 
+* fall time
+
+it is the time take by output for transition from 80% to 20%.
+
+![image](https://user-images.githubusercontent.com/123365830/216901831-f3d93565-64d3-4486-94c5-6fbb6987e02e.png)
+
+so, fall time=0.01695 nsec.
+
+* cell fall delay
+
+it is time for output falling to 50% and input is rising to 50%.
+
+![image](https://user-images.githubusercontent.com/123365830/216901940-9f01ccd5-92ef-453b-86fe-80fb2a8d0cb7.png)
+
+so, cell fall delay= 0.00004 nsec.
+
 # DAY 10 Pre-layout timing analysis and importance of good clock tree
 
 ## Timing modelling using delay tables
@@ -2299,6 +2315,506 @@ Then check the file which is created. Go to the placements folder under results 
 What is clock tree synthesis?
 
 As shown in below, figure, let's connect clk1 to FF1 & FF2 of stage 1 and FF1 of stage 3 and FF2 of stage 4 with out any rules.
+
+![image](https://user-images.githubusercontent.com/123365830/216896579-af986f1f-19ce-40e8-92a4-44bd4600e054.png)
+
+Now, let's see the problem with this clock Rout. let us say time required to reach the FF1 and FF2 of stage 1 are t1 and t2 for clock1. so, we can say that t2-t1= skew (ideally skew=o).
+
+![image](https://user-images.githubusercontent.com/123365830/216896614-3f35dcf8-a7d3-4aac-8a59-cbce575b8439.png)
+
+To make, skew to be 0, this rout definatly not help. so, we can say that what we built the tree is "BAD TREE". so, the concept of H-tree comes out. with the Mid point strategy, H-tree form.
+
+![image](https://user-images.githubusercontent.com/123365830/216896647-1088e7c0-8344-421d-96ad-cb4fe923b4cf.png)
+
+Next thing is clock tree synthesis (buffering).as we see in the clockk tree and we observed that clock has to travel through all wires and it will charge all capacitor which are comming in the path of this wire.
+
+The problem occurse due to the charging the capacitor is signal inntigrity problem because of transition of signals. solution of this problem is add the repeaters here. the repaters are the similar as what we use in the data path but the main difference is, here repeater has equal rise and fall time.
+
+![image](https://user-images.githubusercontent.com/123365830/216896678-e5331f79-ef1b-4a11-beb7-274cab5db427.png)
+
+### Crosstalk and clock net shielding
+
+We build the clock tree in a manners that the skew becomes zero between launch Flop and capture flop. but if accedently any crosstalk heppense then everything what we had design is detoriated.
+
+Let take the first clock net and protect it by shielding. here we protect the clock network from outside world. if the protection is not there then problems like glitch and delta delay is heppens.
+
+The glitch is heppence because of Coupling capacitance between the wires.
+
+![image](https://user-images.githubusercontent.com/123365830/216896756-6d674fe3-c38b-4cdc-9b7c-d3bb3b8fcd23.png)
+
+The shielding is the technique, by which we can protect the net from these problems. In a shielding, we put wire between the other teo wire where coupling capacitance is generate. This extra wire is grounded or connected to VDD.
+
+Now, let's see about the delta delay.
+
+![image](https://user-images.githubusercontent.com/123365830/216896814-f5528dd6-8b71-4b8b-96ef-e85be321700c.png)
+
+### Lab step to run CTS using TritonCTS
+
+Now next step is CTS. for that write the command: "run_cts".
+
+![image](https://user-images.githubusercontent.com/123365830/216896906-fea958c0-fc41-44af-a9b0-a7bba2edefab.png)
+
+In CTS stage the buggers are added in the paths. so, it will modifiying the netlist. so, if we go in the synthesis folfer and check the files, where cts.v file will avaiilable and this file contains the added buffers.
+
+### Lab steps to verify CTS runs
+
+We have run CTS.Now before we goes into the post cts flow, we need to know that the actual meaning of the "run" command. This is the proc of tcl file. so, lets see, from where, openlane take this procs. for that we need to goes into the openlane and then goes into scripts and then check the "tcl_commands". in this file tcl commands are there for every stages what we have run till now. so let's see the "cts.tcl" file.
+
+![image](https://user-images.githubusercontent.com/123365830/216896982-29b029bf-7113-45a1-83a7-2d744cb496d1.png)
+
+Here we can see the many procs are there. so here we can see the procs are run during the CTS run.
+
+![image](https://user-images.githubusercontent.com/123365830/216897052-68e30487-e450-49d6-8804-4273db3dbde4.png)
+
+So when we run the cts in the flow, basically it do this things.
+
+first it run the tritonCTS by givin total information.
+
+then it set the value of timer.
+
+Then it goes for open the openroad.
+
+if we check the openroad folder, at that directory "or.files" are available which was runs in the OPENROAD EDA tool.
+
+Now les's check the "or_cts.tcl" file. inside this we can see the few switches.
+
+![image](https://user-images.githubusercontent.com/123365830/216897167-872aba26-405c-4471-8fcb-df0f5577b728.png)
+
+Now lets check what the library does. For this command is "echo 
+::env(LIB_TYPICAL)"
+
+Now checking the clock period of this by command: "echo $::env(SYNTH_MAX_TRAN)"
+
+So, clock period seted as 2.473 nsec.
+
+Then checking the max cap value, by command : "echo $::env(CTS_MAX_CAP)". and it is setted as 1.53169
+
+Now checking the branch buffer cells by command :"echo $::env(CTS_CLK_BUFFER_LIST)". and these are the buffer cells are listed there "sky130_fd_sc_hd__clkbuf_1 sky130_fd_sc_hd__clkbuf_2 sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8".
+
+And last cheching the root buffer by command: "echo $::env(CTS_ROOT_BUFFER)". So, we find that this "sky130_fd_sc_hd__clkbuf_16 " buffer is root buffer.
+
+![image](https://user-images.githubusercontent.com/123365830/216897302-5fe23810-6b5e-423b-8684-a84afdfe3785.png)
+
+#### Timing analysis with real clocks using openSTA
+
+### Setup timing analysis using real clocks
+
+With real clock, circuit looks littel bit different then ideal clock. Here the bufferes and wires are added to the circuts.
+
+Here, due to buffer, clock signals are not reaching the flop at t=0. it will reach at t=0+(delay of buffer 1 and 2).Now equation change to (θ+1+2)<(T+1+3+4).
+
+![image](https://user-images.githubusercontent.com/123365830/216897415-11dca0c5-5350-473f-82f1-0c2b46e5fa8e.png)
+
+Let's called "1+2"=∆1 and "1+3+4"=∆2 and (∆1-∆2)=skew
+
+![image](https://user-images.githubusercontent.com/123365830/216897448-aef807a3-cb8e-47f4-8b01-357532719a51.png)
+
+And here also, we have to consider the propogation skew (s) and uncertainty delay (US). so final equaltion becomes like, (θ+∆1)<(T+∆2-S-US).
+
+we can also say that (θ+∆1)= data arrival time and (T+∆2-S-US)=data required time.
+If (Data required time)- (Data arrival time) = +ve then it is fine. If it is -Ve then it is called 'slack'.
+
+### Hold timing analysis
+
+It is littel bit different then setup timing analysis. here we are sending the first pulse to the both launch FLop and capture flop.
+
+Hold condition state that, Hold time (H)< combinational delay (θ). So, (θ>H).
+
+![image](https://user-images.githubusercontent.com/123365830/216897499-98d4508f-6565-4712-b263-847d8c37f3ef.png)
+
+Hence, finite time 'H' required for 'Qm' to reach Q i.e., internal delay of mux2= hold time.
+
+Now, if we add the real time clock, the equation will be change. now equation becomes (θ+∆1)>(H+∆2).
+
+![image](https://user-images.githubusercontent.com/123365830/216897530-c2f88789-509c-413e-a7e5-efbfa7124196.png)
+
+### Hold time analysis with real clock
+
+Now here also adding the Unsetainty delay(UH) value due to jitter. so, equation becomes like, (θ+∆1)>(H+∆2+UH).
+
+we can also say that (θ+∆1)= data arrival time and (H+∆2+UH)=data required time.
+
+If (Data arrival time) -(Data required time)= +ve then it is fine. If it is -Ve then it is called 'slack'.
+
+Now, applying all these things in out network.
+
+![image](https://user-images.githubusercontent.com/123365830/216897594-86cd6912-1b99-4033-a961-71dcbb057ce1.png)
+
+### Lab steps to analyze timing with real clock using OpenSTA
+
+let's open the OPENROAD tool in the flow by "openroad" command.
+
+our objective is to do analysis of the clock tree.
+
+we are analysin this in the OpenROAD because OpenSTA is already built in the OpenROAD. In OpenROAD the timing analysis is done in a different way. first we have to create "db" and "db" is created in a "lef" and "def" file.
+
+Now let's create the DB. To create the DB, first we have to read the lrf file by comand "% read_lef /openLANE_flow/designs/picorv32a/runs/29-01_22-23/tmp/merged.lef".
+
+Then we read the "def" file by command: "read_def /openLANE_flow/designs/picorv32a/runs/29-01_22-23/results/cts/picorv32a.cts.def".
+
+NOw to create the DB write the command "write_db pico_cts.db"
+
+NOW read this db file by command "read_db pico_cts.db"
+
+then read the verilog file by applying the command "read_verilog /openLANE_flow/designs/picorv32a/runs/29-01_22-23/results/synthesis/picorv32a.synthesis_cts.v"
+
+then read the library (max) by this command:"read_liberty -max $::env(LIB_FASTEST)".
+
+similarly read the library (min) by this command: "read_liberty -min $::env(LIB_SLOWEST)".
+
+Now read the sdc file by this command: "read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc"
+
+now set the clocks by this command:"set_propagated_clock [all_clocks]"
+
+there reports the checks by this command: "report_checks -path_delay min_max -format full_clock_expanded -digits 4".
+
+so after running this we can see that the slack is positive for hold and setup both. and also we can notice the data required time and data arroval time also.
+
+So, the Hold slack = 1.4336nsec because here we can see that (arrivel time) >(required time).
+
+![image](https://user-images.githubusercontent.com/123365830/216897775-3ec2adb8-3047-4e02-abe3-df6c54f11cb1.png)
+
+NOw setup slack = 14.628nsec because here we can see that (required time)>(arrival time).
+
+### Lab steps to execute openSTA with right timing libraries and CTS assignment
+
+TritonCTS is right now built according to optimize fully according to one corner and we had bulid the clock tree for typical corner. and library also min and max. so we made tree according to typical corner but we analize it according to one corner. so, analysis become incorrect.
+
+so, first we exits from the openroad by using "exit" command and we have to include the typical library for typical analysis. for that we have to open the "openroad" again and add this typical library. now we don't need to add lef and def file here. now commands for the adding a file is:
+
+	read_db pico_cts.db
+
+	read_verilog /openLANE_flow/designs/picorv32a/runs/29-01_22-23/results/synthesis/picorv32a.synthesis_cts.v
+
+	read_liberty $::env(LIB_SYNTH_COMPLETE)
+
+	link_design picorv32a
+
+	read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+
+	set_propagated_clock [all_clocks]
+
+	report_checks -path_delay min_max -format full_clock_expanded -digits 4
+
+slack for typical coirner= 0.1075nsec
+
+![image](https://user-images.githubusercontent.com/123365830/216898216-a44c156f-c70f-4ef0-b9bd-b3aefb78be42.png)
+
+Now checking the branch buffer cells by command :"echo $::env(CTS_CLK_BUFFER_LIST)". and these are the buffer cells are listed there "sky130_fd_sc_hd__clkbuf_1 sky130_fd_sc_hd__clkbuf_2 sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8".
+
+when openlane are making the CTS, at that time this buffers are place in the clock path to meet the skew value. and we always want skew value is maximum to the 10% of clock period.
+
+# Day 5 -Final steps to build power distribution network
+
+## Routing and design rule check(DRC)
+
+### Introduction to Maze Routing A lee As Algorithm
+
+Next stage in the physical design is the routing and DRC stage.
+
+Routing. by the name it is says that rout means make physical contact between Din1 and FF1 od stage 1. but algorithm wise,it understand that Din1 is the source and FF1 input pin is the target. so, algorthm has to find the best possible solution to connect the Din1 and FF1.
+
+For that we use Maze Routing and Lee's algorithm. let's try to connect Block 1 and block 2 of stage 3. there are varies mathod to connect these blocks but we need best solution for the rout or connection. To understand that, we remove all other things.
+
+Algorithm create the routing gird at backend. here algirithm create two points. one is source and other is target. Now by using this routing grid, algorithm find the best way of routing. algorithm marks the adgecent grids of source. similarly again it will find the adgecent grids of the previos grids.similarly this process will runs continuosly.
+
+![image](https://user-images.githubusercontent.com/123365830/216898419-5d485aea-964c-444b-bd6c-95cb71930157.png)
+
+### lee's algorithm conclusion.
+
+The extanding process of adgecent grids are contionuous till it reaches to the target.
+
+![image](https://user-images.githubusercontent.com/123365830/216898505-36a7efe0-45fd-43b7-97c6-a7dc6fce2650.png)
+
+there is many ways to reach the target. but the best possible way is 'L' shaped way.
+
+![image](https://user-images.githubusercontent.com/123365830/216898543-b86e3818-6752-42e0-9776-1ce5be11a284.png)
+
+lets take another example for this routing.
+
+![image](https://user-images.githubusercontent.com/123365830/216898634-4dcb76d2-ad77-4240-9111-dec47c9296f8.png)
+
+Now, we reouted all the blocks and the circuits looks like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216898667-6463d4b4-156b-4613-b140-b78e42de869d.png)
+
+### DRC(Design Rule check)
+
+While doing the routing, we need to follow certain rules for that. this is called DRC cleaning.
+
+Lets take two parallel wires from the circuit for example,
+
+![image](https://user-images.githubusercontent.com/123365830/216898716-912e1a70-2164-4d80-9c61-27bb0e4ee927.png)
+
+* Rule 1
+
+Width of the wire should be minimum that derived from the optical wavelenth of lithography technique applied.
+
+![image](https://user-images.githubusercontent.com/123365830/216898777-38c56cb8-f1da-486e-8227-8388e5368ef9.png)
+
+* Rule 2
+
+The minimum pitch between two wire shold be this much.
+
+![image](https://user-images.githubusercontent.com/123365830/216898845-dfa99245-7b7b-48be-aa0a-3787324fd778.png)
+
+* Rule 3
+
+The wire spacing between two wires should be this much.
+
+![image](https://user-images.githubusercontent.com/123365830/216898954-71ef1cae-0093-4e25-97a8-0fb8b600b66f.png)
+
+Let's take other part for understand the rules. basic problem in this types of wire is the signal short.
+
+![image](https://user-images.githubusercontent.com/123365830/216898981-cffaedf3-236c-4c7a-b0c8-a2c859f859a7.png)
+
+Solution of this signal short problem is take one of the wire and put it on the other metal layer. usually upper metal is wider than the lower metal.
+
+![image](https://user-images.githubusercontent.com/123365830/216899039-ee571e2e-6e58-4041-a3f3-59f825062549.png)
+
+After this solution, we add two new DRC rules should be check.
+
+* Rule 1
+
+via width should be some minimum value.
+
+![image](https://user-images.githubusercontent.com/123365830/216899111-6c4aeb08-f06f-4e3e-abdf-c640f8fd797d.png)
+
+* Rule 2
+
+Via spacing should be minimum this.
+
+Next step is paracitic Extraction. so, the wire will get some resistance and capacitance value.
+
+![image](https://user-images.githubusercontent.com/123365830/216899236-d5995ee7-1bdc-4b4a-a656-d7c257f79f3a.png)
+
+### Power distribution network and routing
+
+Leb steps to build power distribution network
+
+IS in case, our terminal is delected by some cause, the if we want the previos terminal once again then this steps should be followed:
+
+* docker
+
+* ./flow.tcl -interactive
+
+* package require openlane 0.9
+
+* prep -design picorv32a -tag [run file name i.e., 20-01_22-23]
+
+Now to check the which was the last stage we perorm, the command is:"echo $::env(CURRENT_DEF)".
+
+So, till now we have done CTS and now we are going to do the routing. but before routing we have to generate the PDN(power distribution network)file. for that command is: "gen_pdn".
+
+![image](https://user-images.githubusercontent.com/123365830/216899423-7166381d-36c2-44e9-8d56-6bb62671fb13.png)
+
+Here we can see the total number of nodes on the net VGND and it is also says that Grid matrix is created successfully. here total connection between all PDN nodes establish in the net VGND.
+
+Now, till here we have picorv32a chip, and it needs the power. so it will get power from VDD and GND pads. From the pads, power goes to the tracks and from the tracks, the cells get power.
+
+### Lab steps from power straps to standerd cell power
+
+To understan this, take an example here,
+
+![image](https://user-images.githubusercontent.com/123365830/216899480-0442fbf4-18c5-4186-95cc-baee4b991e6d.png)
+
+In this figure, the green box is available is let say picorv32a chip. And the yellow, red and blue boxes which are the shown on the outside of the frame are the I/O pins and the power and ground pads. in this pads, the corner ones are called corner pads.
+
+Red pads are the power pads and Blue pads are ground pads.
+
+Power is transfered to the rings from the pads through Via which is shown by black dots on the cross section points of the ring and pads.
+
+Now we need to insure that the power is transfered from the ring to the chip. for that we have vertiocal and horizontal tracks which are also shown by the red and blue color.
+
+NOw, we need to supply power to the standerd cell (Which are shown by rectangular white boxes) from these tracks. this is done by horizontal small connections shown in the figure.
+
+So, in a lab we have done this all the things till power distribution.
+
+Now next and the final step is routing.
+
+### Basic and Global detailed routing and configure TritonRoute
+
+Now current def.file is change to pdn.def from the cts.def. pdn.def file is now in the "runs/29-01_22-23/tem/floorplan/pdn.def".
+
+In the routing process we are focusing on the routing strategy. there are 5 routing strategies are there. 0,1,2,3 and 14. routing is done in the TritonRoute engine. we have to specifies the strategy for the routing. for example if we ser the strategy to 14 then "TritonRoute14" strategy is used.
+
+If we set the TritonRouting strategy to "0" then it want converge to a 0 TRC routing. but because of this we will improve in the memory requirement and run time. if we use TritonRoute14 then the run time will be approximate 1 hours. but in the TritonRoute0 it will be around the 30 minutes. here we use the "TritonRoute0". so in our flow first we check the routing strategy by the command "echo $::env(ROUTING_STRATEGY)". if it is "0" then it is fine, otherwise we have to change the strategy to "0".
+
+Now the last thing remains is routing. for that command is :"run_routing".
+
+The routing process is very complex.So, total routing is devided into two part.
+
+* Fast route (Global route)
+
+* Detailed route
+
+![image](https://user-images.githubusercontent.com/123365830/216899596-5b526314-36f6-4f41-9671-7ed236fd2676.png)
+
+In the Global route, the routing region is devided into the rectangular grids cells as shown in the figure. and it is represented as 3D routing graph. Global route is done by FAST route engine.The detailed route is done by TritonRoute engine.
+
+As shown in the figure, A,B,C,D are four pins which we want to connects through routing. and this whole image of A,B,C,D show the nets.
+
+Now, the routing is successfully done.
+
+![image](https://user-images.githubusercontent.com/123365830/216899673-bf5a981f-632a-4f98-a546-42b2feaae714.png)
+
+#### Tritinroute features
+
+### TritonRoute feature 1 -Honors pre-processed route guide
+
+![image](https://user-images.githubusercontent.com/123365830/216899760-02c09120-7eb4-4f60-977f-0a5c18f96386.png)
+
+* It performs initial detail route.
+
+* It attempts as much as possible to route within route guides.
+
+requierment of processed guides are 1)should have within unit lenth 2)should be in the preferred direction.
+
+![image](https://user-images.githubusercontent.com/123365830/216899844-f405feef-c230-4676-9c3a-6c1666d634c6.png)
+
+* Assumes route guides for each net satisfy inter-guide connectivity.
+
+If two guides are connected then 1) they are on the same metal layer with touching edges. 2) they are on the neighbouring metal layers with a nonzero vertically overlapped area.
+
+* Assumes route guides for each net satisfy inter-guide connectivity.
+
+### TritonRoute feature 2 & 3 - inter-guide connectivity and intra-layer & inter -layer routing
+
+Each unconnected terminal. i.e, poin of a standerd-cell instance should have its pin shape overlapped by a route guide.
+
+![image](https://user-images.githubusercontent.com/123365830/216899946-c0b700a5-2b76-4b2e-873a-046079aa1bb7.png)
+
+Here we can see that black dots are pins of the cells and it is overlapped by route guide. if you have pins on the intersection of the vertical and horizontal tracks that will ensure that it will be overlapped by route guides.
+
+### Intra-layer parallel and inter-layer sequential panel routing
+
+Intra layer means within the layers and inter layear means between the layers.
+
+![image](https://user-images.githubusercontent.com/123365830/216900025-d10331e9-b6dd-41cb-a0e0-35160b1a09ae.png)
+
+In this figure we can see the 4 layers of metal. each of these layers are devided in to the "--" lines. lets focus on metal 2 layer. here we assume the routing direction vertical. These "--" lines are called pannels. each pannels assigns the routing guides. here we can see the blue arrows. here routing is heppenes in the even index. it means that intra layer parallel routing. first it is heppenes in the even index and the it will heppen in the odd index. but it is heppening in the parallel in this perticular layer.
+
+So, the (a) figure shows the parallel routing of panels on M2.In (b) figure, we can see the parallel routing of even panels on M3 and (c) shows the parallel routing of odd panels on M3.
+
+### TritonbRoute method to handle connectivity
+
+* INPUTS: LEF
+
+* OUTPUTS:detailed routing solution with optimized wore-length and via count
+
+* CONSTRAINTS:Route guide honouring, connectivity constraonts and design rukes
+* 
+Now we have to defined the space where detailed routing take spaced.
+
+### Handling connectivity
+
+![image](https://user-images.githubusercontent.com/123365830/216900165-b59f9c0a-7321-43b6-94d6-47a37112ac35.png)
+
+To handle the connectivity, two concepts comes into the picture,
+
+* Access point:An on-gride point on the metal layer of the route guide, and is used to connect to lower-layer segments, upper-layer segments, pins or IO ports.
+
+* Access point cluster (APC): A union of all access points derived from same lower-layer segment,upper-layer guide, a pin or an IO port
+Here in the figure shown above, the illustration of access points:
+
+(a)To a lower-layer segment
+
+(b)To a pin shape
+
+(c)To upper layer
+
+### Routing topology algorithm and final files list post-route
+
+![image](https://user-images.githubusercontent.com/123365830/216900255-1baed45e-bcee-4fac-b399-14092fc12588.png)
+
+The algorithm says that for each APCs we have to find the cost associated with it and we have to do minimum spaning tree betweem the APCs and the cost. finally the conclusion of the algorithm is that we have to find the minimul and the most optimal poits between two APCs.
+
+Now, remaning things is the post routing STA analysis. for that the first goal is to extract the perasetic (SPEF). This SPEF extraction is done outside the openlane because openlane does not have SPEF extraction tool.
+
+The .spef file can be found under the routing folder under the results folder.
+
+![image](https://user-images.githubusercontent.com/123365830/216900980-44e1842a-bf89-43cb-a303-acfee8fd538a.png)
+
+The following command can be used to stream in the generated GDSII file.
+
+	"run_magic"
+
+Now the gds file will be generated and it is stored in the magic folder under results folder.
+
+![image](https://user-images.githubusercontent.com/123365830/216901044-dea6d19e-5a37-4d4c-aa84-9c37eee26df7.png)
+
+And the generated layout is,
+
+![image](https://user-images.githubusercontent.com/123365830/216901088-dc494045-a7bc-41af-8d6c-cf71a9f83385.png)
+
+All commands to run the openlane flow
+
+	docker
+
+	./flow.tcl -interactive
+
+	package require openlane 0.9
+
+	prep -design picorv32a
+
+	set ::env(SYNTH_STRATEGY) "DELAY 0"
+
+	run_synthesis
+
+	init_floorplan
+
+	place_io
+
+	global_placement_or
+
+	detailed_placement
+
+	tap_decap_or
+
+	detailed_placement
+
+	run_cts
+
+	gen_pdn
+
+	run_routing
+
+	run_magic
+
+## References
+
+Workshop Github material
+
+https://github.com/google/skywater-pdk
+https://github.com/nickson-jose/vsdstdcelldesign
+https://sourceforge.net/projects/ngspice/
+https://github.com/
+https://www.vlsisystemdesign.com/wp-content/uploads/2017/07/Introduction-to-Industrial-Physical-Design-Flow.pdf
+https://github.com/piyushkandoriya/Advance-Physical-Design-using-openLANE-Sky130
+https://github.com/Richa297/RTLSky130Workshop
+https://github.com/nickson-jose/vsdstdcelldesign/
+https://github.com/CPA872/openlane
+https://github.com/MalayMDas/VLSI-Physical-Design-Workshop
+https://github.com/efabless/openlane
+
+### Acknowledgement
+
+Mr. kunal ghosh
+
+Nanditha Rao
+
+Mr.Nickson Jose
+
+Mr. SUMANTO KAR
+
+
+
+
+
+
+
+
+
 
 
 
