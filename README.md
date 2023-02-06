@@ -2196,6 +2196,113 @@ Till here we not get slack 0. to make slack 0, we ahve to write comand "set ::en
 
 After running synthesis we will get improved timing.
 
+![image](https://user-images.githubusercontent.com/123365830/216894935-3a71525b-86ed-4bf7-ab81-e04f1fb40a1b.png)
+
+Next command for run is :
+
+	set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+
+	add_lefs -src $lefs
+
+Then again run the synthesis.
+
+#### Timing analysis with ideal clocks using openSTA
+
+### Setup timing analysis and introduction to flip-flop setup time
+
+### Timing analysis (with ideal clock)
+
+we start with taking the ideal clock and we will do timing analysis for the ideal clock first.
+
+Let's start the setup analysis with the ideal clock(single clock). specifications of the clock is
+
+* clock frequency =1 GHz
+
+* clock period =1 nsec
+
+Let's take lainch Flop and Capture flop with clock. here clock tree is not built yet. so it is ideal scenario. here we have to do analysis between '0' and 'T'. with that assume that the delay of logic is 'θ'.
+
+![image](https://user-images.githubusercontent.com/123365830/216895207-c06afbe5-bc7c-430d-8ca4-5ae1bfe4bc0c.png)
+
+Setup timing analysis says that θ<T. this condition should be neccessory for the the comninational logic work.
+
+Now let's introduce the practical scenario here. Opening the capture flop and it has two mux inside it.
+
+![image](https://user-images.githubusercontent.com/123365830/216895260-3c478111-216e-4892-9836-0b7d76ce2a55.png)
+
+The way flop work, it will shown by the timing graph like this,
+
+![image](https://user-images.githubusercontent.com/123365830/216895307-84c2e067-a3a1-4ac1-9c9b-f081a895256a.png)
+
+So, here mux 1 and mux 2 both have their own delay. these delay will restrict the combination delay to the requirment.
+
+Hence finite time 's' required before clk edge for 'D' to reach Qm.
+
+So, we can write that the internal delay of the MUX1 = set up time(S).
+
+So, now θ<T becomes θ<(T-S).
+
+### Introduction to clock jitter and uncertainty
+
+Let's bring one more practical scenario here. clock is taking from the some clock source or PLL. So, because of some delay from the practical source of clock or PLL, clock pulse will not comes exacly at t=0 or at t=T. that in built variation of the clock is called jitter.
+
+![image](https://user-images.githubusercontent.com/123365830/216895467-10bfbc37-c1b0-4012-a298-b0ca7f7c8fd5.png)
+
+lets consider this uncertantity time(US) in consideration. So, now equation becomes like, θ<(T-S-US). Now assuming that 'S'=0.01ns and 'US'=0.09ns. by taking that, lets identify the timing path for our existing scenario. in our circuit stage 1 and stage 3 logic path has single clock.
+
+NOw, what we have to do is identify the combinational path delay for the given both logics.
+
+![image](https://user-images.githubusercontent.com/123365830/216895540-1132a631-9adc-4e95-9a76-f24285d00abe.png)
+
+![image](https://user-images.githubusercontent.com/123365830/216895556-24c89106-ff49-45c6-bfb3-76e3dcb7ff5e.png)
+
+### Lab steps to configure OpenSTA for post-synth timing analysis.
+
+When we do CTS, CTS is a stage where, we add clock buffers along with clockpath and build the clock tree. so, actually we are changing the netlist. Along the running CTS, actually the netlist file also created. so, after running the CTS, we will see the new Verilog file here.
+
+Now, we see what is in the my_base.sdc file.
+
+![image](https://user-images.githubusercontent.com/123365830/216895665-b79ff41b-e98e-4a82-95ed-3d669ac1397a.png)
+
+Here, we can see the capacitor load and clock period and clock port etc.
+
+Now, to reduce the fanout we use the command is : "set ::env(SYNTH_MAX_FANOUT) 4" and then run the synthesis.
+
+but here also slack doesn't reduce.
+
+Now next step is run floorplan, place IO, do global placement or detail placement and genrate pdn file the run the cts by following comands.
+
+	inut_floorplan
+
+	place_io
+
+	global_placement_or
+
+	detailed_placement
+
+	tap_decap_or
+
+	detailed_placement
+
+After running the floorplaning and done the global placement we get positive slack.
+
+![image](https://user-images.githubusercontent.com/123365830/216895791-a9881cf4-e2ed-4c31-bb49-0f4118360f3e.png)
+
+Then check the file which is created. Go to the placements folder under results and then invoke the magic tool and load the def file. The command is:magic -T /home/hsu-mon-maung/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.placement.def &
+
+![image](https://user-images.githubusercontent.com/123365830/216896207-80e3a2a5-6c79-40a6-bd01-fa89551c6385.png)
+
+#### Clock tree synthesis TritonCTS and signal integrity
+
+### Clock tree routing and buffering uisng H-Tree algorithm
+
+What is clock tree synthesis?
+
+As shown in below, figure, let's connect clk1 to FF1 & FF2 of stage 1 and FF1 of stage 3 and FF2 of stage 4 with out any rules.
+
+
+
+
 
 
 
