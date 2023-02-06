@@ -2198,7 +2198,7 @@ If load is not same at the every nodes, the skew will not be the zero.
 
 ### Lab steps to configure synthesis settings to fix slack and include vsdinv
 
-After synthesis, we observed that the slack is nagative here. wns(worst negative slack)= -24.89 and tns(total negative slack)= -759.
+After synthesis, we observed that the slack is nagative here. wns(worst negative slack)= -23.89 and tns(total negative slack)= -711.59
 
 ![image](https://user-images.githubusercontent.com/123365830/216833634-5b95b14c-c4ea-4ff4-9cf2-228848a64780.png)
 
