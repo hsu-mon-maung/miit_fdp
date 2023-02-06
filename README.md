@@ -2186,6 +2186,16 @@ After synthesis, we observed that the slack is nagative here. wns(worst negative
 
 ![image](https://user-images.githubusercontent.com/123365830/216833634-5b95b14c-c4ea-4ff4-9cf2-228848a64780.png)
 
+let's do some modification here. for that opening the READme file from the /openlane/configuration/ less READme.md
+
+Now lets try to make balance between area and the delay of the synthesis by changing the stratagy. comand for checking the current strategy is "echo $::env(SYNTH_STRATEGY)", and comand for changing the stategy is "set ::env(SYMTH_STRATEGY) 1". by doing this area will increase the little but but timing will improve.
+
+Then checking the synth_bufferung and synth_sizing. if any one them is off then make it on by set the value of it by 1.
+
+Till here we not get slack 0. to make slack 0, we ahve to write comand "set ::env(SYMTH_STRATEGY) DELAY 0"
+
+After running synthesis we will get improved timing.
+
 
 
 
