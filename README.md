@@ -1,7 +1,27 @@
 # miit_fdp
 # Day 1 Introduction to Verilog RTL Design and Synthesis
 
-Labs using iverilog and gtkwave
+## Introduction to open-source simulator iverilog
+
+RTL : Register-transfer level (RTL) is a representation at the abstraction level that expresses a synchronous digital circuit in terms of the flow of digital signals (data) between hardware registers along with the logical operations performed on those signals.Register-transfer-level abstraction is used in hardware description languages (HDLs) like Verilog and VHDL to create high-level representations of a circuit, from where we can derive lower-level representations.
+
+Simulator : It is a tool for checking whether our RTL design meets the required specifications or not. Icarus Verilog is a simulator used for simulation and synthesis of RTL designs written in verilog which is one of the many hardware description languages.
+
+Design : It is the code or set of verilog codes that has the intended functionality to meet the required specifications.
+
+Testbench : Testbench is a setup which is used to apply stimulus (test_vectors) to the design to check it's functionality.It tests whether the design provides the output that matches the specifications.The RTL Design gets instantiated in the testbench.
+
+![image](https://user-images.githubusercontent.com/123365830/218318060-0d5c6986-089b-4b90-a0cc-15258ee6c8a0.png)
+
+### Iverilog Based Design Flow :
+
+1. The iverilog simulator takes RTL design and Testbench as inputs.
+
+2. It produces a VCD file(Value change dump format) as output. Only changes in the input are dumped to changes in the output.
+
+3. We use Gtkwave to see these output changes graphically.
+
+## Labs using iverilog and gtkwave
 mkdir vsd  
  cd vsd  
  git clone https://github.com/kunalg123/vsdflow.git  
